@@ -23,4 +23,8 @@ public class CommonProxy
 	public void multiTexture(Item item, ResourceLocation[] chaine)
 	{
 	}
+
+	public boolean isClientSide(){return false;}
+	public boolean isServerSide(){return !isClientSide();}
+	
 }

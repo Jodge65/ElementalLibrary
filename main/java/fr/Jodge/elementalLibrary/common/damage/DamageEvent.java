@@ -69,23 +69,14 @@ public class DamageEvent
 				}
 	            catch (Throwable throwable)
 	            {
-	            	try
-	            	{
-	            		String text = "A problem occur when " + attacker.getName() + "try to hit " + target.getName() + "\n"
-	            				+	JLog.getDetails((EntityLivingBase) attacker)
-	            				+	JLog.getDetails(target)
-	            				;
-		            	
-		            	JLog.crashReport(throwable, text);
-	            	}
-	            	catch (Throwable throwable2)
-		            {
-	            		String text = "A problem occur when '" + attacker + "' try to hit '" + target + "'\n"
-	            				+ "One of them don't have getName() methode, or isn't an entity."
-	            				;
-	            		// WARNING : here, we don't throw throwable2 : we don't want to know their are an error on rendering of crash report
-		            	JLog.crashReport(throwable, text);
-		            }
+	            	
+	            	String text = "A problem occur when " + attacker.getName() + "try to hit " + target.getName() + "\n"
+            				+	JLog.getDetails((EntityLivingBase) attacker)
+            				+	JLog.getDetails(target)
+            				;
+	            	
+	            	JLog.crashReport(throwable, text);
+	            	
 	            }
 			}
 			else

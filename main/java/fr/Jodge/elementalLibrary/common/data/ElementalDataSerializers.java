@@ -7,6 +7,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class ElementalDataSerializers extends DataSerializers
 {
@@ -15,17 +16,17 @@ public class ElementalDataSerializers extends DataSerializers
 	{
 		public void write(PacketBuffer buf, ElementalMatrix value)
 	    {
-			// we use the string to know the content and create, so we just write this on buffer.
-	       	buf.writeString(value.write());
+			// 
+			value.toByte(buf);
+
 	    }
 		
 	    public ElementalMatrix read(PacketBuffer buf)
 	    {
-	    	// the buf give us a string. The constructor can read the line and understand. What else ?
-	       	String value = buf.readStringFromBuffer(buf.capacity());
-	       	
-	   		ElementalMatrix object = new ElementalMatrix(value);
-	   		return object;
+	    	// 
+       	
+	   		ElementalMatrix obj = new ElementalMatrix();
+	   		return (ElementalMatrix) obj.fromByte(buf);
 	   }
 	    
 	   public DataParameter<ElementalMatrix> createKey(int id)

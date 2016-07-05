@@ -1,5 +1,7 @@
 package fr.Jodge.elementalLibrary.common.damage;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +77,7 @@ public class ElementalMatrix implements IElementalWritable
 	 * this constructor will use the list given and add 1.0 to each other unknown elements
 	 * @param matrix <i>ArrayList<Float></i> matrix that will be use.
 	 */
-	public ElementalMatrix(ArrayList<Float> matrix)
+	public ElementalMatrix(List<Float> matrix)
 	{
 		this.matrix = matrix;
 		completeArray();
@@ -565,7 +567,10 @@ public class ElementalMatrix implements IElementalWritable
 
 	}
 	
-	@Override
+	
+	
+	// TODO
+	
 	public String write() 
 	{
 		String text = "";
@@ -580,9 +585,32 @@ public class ElementalMatrix implements IElementalWritable
 		return text;
 	}
 	
-	@Override
 	public IElementalWritable createByString(String value) 
 	{
 		return new ElementalMatrix(value);
+	}
+	@Override
+	public void toByte(ByteBuf buf) 
+	{
+		int length = matrix.size();
+		buf.writeInt(length);
+		for(float value : matrix)
+		{
+			buf.writeFloat(value);
+		}
+		
+	}
+	
+	@Override
+	public IElementalWritable fromByte(ByteBuf buf) 
+	{
+		int length = buf.readInt();
+		List<Float> tab = new ArrayList(length);
+		for(int i = 0; i < length; i++)
+		{
+			tab.add(i, buf.readFloat());
+		}
+		
+		return new ElementalMatrix(tab);
 	}
 }

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.Jodge.elementalLibrary.common.damage.ElementalMatrix;
+import fr.Jodge.elementalLibrary.common.data.AskPlayerStatsPacket;
 import fr.Jodge.elementalLibrary.common.data.ElementalDataSerializers;
 import fr.Jodge.elementalLibrary.common.data.IElementalWritable;
 import fr.Jodge.elementalLibrary.common.data.PlayerStatsPacket;
@@ -45,7 +46,8 @@ public class ElementalConstante
 		JLog.info(" --- PREINIT --- ");
 		
 		PLAYER_STATS_SOCKET = NetworkRegistry.INSTANCE.newSimpleChannel(PLAYER_STATS_ID);
-		PLAYER_STATS_SOCKET.registerMessage(PlayerStatsPacket.Handler.class, PlayerStatsPacket.class, 0, Side.CLIENT);
+		PLAYER_STATS_SOCKET.registerMessage(AskPlayerStatsPacket.Handler.class, AskPlayerStatsPacket.class, 0, Side.SERVER);
+		PLAYER_STATS_SOCKET.registerMessage(PlayerStatsPacket.Handler.class, PlayerStatsPacket.class, 1, Side.CLIENT);
 		JLog.info("New socket have been create for PLAYER_STATS_SOCKET");
 
 		ENTITY_ATK_KEY = new HashMap<Class, DataParameter>();

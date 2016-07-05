@@ -16,7 +16,9 @@ import jline.internal.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.server.MinecraftServer;
 import fr.Jodge.elementalLibrary.common.ElementalConstante;
 import fr.Jodge.elementalLibrary.common.function.JLog;
 
@@ -24,27 +26,36 @@ public class PlayerStats
 {
 	/** integer refers to one of int ElementalConstante.CONSTANTE */
 	public Map<Integer, IElementalWritable> value;
-	public UUID idEntity;
+	public int idEntity;
 	
 	/** private state that refer to file success (or not) */
 	private boolean succes;
 	
-	public PlayerStats(UUID id) 
+	
+	public static final String folder = "playerdata\\";
+	public static final String extention = ".eld";
+	
+	public PlayerStats(int id) 
 	{
 		value = new HashMap<Integer, IElementalWritable>();
 		succes = true;
 		this.idEntity = id;
 
 	}
-	/**
-	 * read the file and adapt value
-	 * @param data <i>File</i> file that refers to the player.
-	 */
-	public PlayerStats(File data, UUID id) 
+	
+	public PlayerStats(EntityPlayer target) 
 	{
-		this(id);
+		this(target.getEntityId());
+
+		MinecraftServer server = target.getServer();
+		String url = folder + target.getUniqueID() + extention;
+		File data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 		
+		makeByFile(data);
+	}
 		
+	protected void makeByFile(File data)
+	{
 		if(!data.exists())
 		{
 			// if file not exist, then create new player
@@ -63,10 +74,8 @@ public class PlayerStats
 			succes = true;
 			CreateNewPlayer(data);
 		}
-
 		
 	}
-	
 	
 	public PlayerStats add(Integer key, IElementalWritable obj)
 	{

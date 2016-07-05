@@ -29,7 +29,9 @@ public class Main
 	public static final String MODNAME = "Elemental Library";
 	public static final String MODVER = "A0.1.0";
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
+	public final static int JLOG_LEVEL = 0;
+
 	public static ElementalLibraryDebug DEBUG_WINDOWS;
 
 	

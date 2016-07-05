@@ -20,6 +20,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -40,8 +41,13 @@ public class DamageHelper
 
 		// init
 		List<Float> damageByElement = new ArrayList<Float>();
-		ElementalMatrix atkMatrix = attacker.getDataManager().get(ElementalConstante.getDataKeyForEntity((EntityLivingBase)attacker, ElementalConstante.DATA_ATK));
-		ElementalMatrix resistMatrix = targetEntity.getDataManager().get(ElementalConstante.getDataKeyForEntity((EntityLivingBase)targetEntity, ElementalConstante.DATA_RES));
+		
+		DataParameter atkKey = ElementalConstante.getDataKeyForEntity((EntityLivingBase)attacker, ElementalConstante.DATA_ATK);
+		ElementalMatrix atkMatrix = attacker.getDataManager().get(atkKey);
+		
+		DataParameter resistKey = ElementalConstante.getDataKeyForEntity((EntityLivingBase)targetEntity, ElementalConstante.DATA_RES);
+		ElementalMatrix resistMatrix = targetEntity.getDataManager().get(resistKey);
+		
 		ElementalMatrix environnementMatrix = EnvironmentalHelper.getEnvironmentalMatrix((EntityLivingBase) targetEntity);
 		ElementalMatrix damageMatrix;
 		
