@@ -1,6 +1,6 @@
 package fr.Jodge.elementalLibrary.proxy;
 
-import fr.Jodge.elementalLibrary.common.function.JLog;
+import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -39,4 +39,7 @@ public class ClientProxy extends CommonProxy
 	{
 		ModelBakery.registerItemVariants(item, chaine);
 	}
+	
+	public boolean isClientSide(){return !super.isClientSide();}
+	public boolean isServerSide(){return !isClientSide();}
 }
