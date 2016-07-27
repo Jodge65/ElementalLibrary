@@ -78,7 +78,7 @@ public class DamageEvent
 			else
 			{
 				// else, it's an other kind of entity... 
-				JLog.write("### SOURCE heuuu... : " + source + ", Entité : " + attacker); // TODO
+				JLog.write("### SOURCE heuuu... : " + source + ", Entité: " + attacker); // TODO
 
 			}
 		}
