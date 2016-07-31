@@ -8,7 +8,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -16,18 +18,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.MonsterHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
-import fr.Jodge.elementalLibrary.data.interfaces.IMonsterMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataEvent
 {
 	// this need to be trigger faster cause of time needed to send packet to client
-	@SubscribeEvent(priority = EventPriority.HIGH)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onSpawn(EntityJoinWorldEvent event)
 	{
 		Entity target = event.getEntity();
@@ -75,13 +76,17 @@ public class DataEvent
 			PlayerHelper helper = PlayerHelper.getPlayerHelper(player);
 			helper.exit();
 		}
-
+	}
+	
+	public void onInteract (EntityInteractSpecific event)
+	{
+		
 	}
 	
 	@SubscribeEvent
 	public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) 
 	{
         // purge constant
-    	ElementalConstante.init.onClientExit();
+    	ElementalConstante.onClientExit();
 	}
 }

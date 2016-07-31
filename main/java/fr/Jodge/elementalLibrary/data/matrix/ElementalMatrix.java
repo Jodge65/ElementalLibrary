@@ -4,15 +4,18 @@ import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import com.google.common.base.Optional;
 import com.google.gson.JsonObject;
 
-import fr.Jodge.elementalLibrary.Element;
-import fr.Jodge.elementalLibrary.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import scala.Int;
 import scala.actors.threadpool.Arrays;
@@ -62,33 +65,23 @@ public abstract class ElementalMatrix implements IElementalWritable
 {
 
 	/** number of element is unknown or can change during process, so we use a list */
-	protected List<Float> matrix;
-	
+	protected Map<Element, Float> matrix;
 	/**
 	 * The default constructor will give a basic 1.0 matrix to every entity
 	 */
 	public ElementalMatrix()
 	{
-		this(1.0F);
+		this(0.0F);
 	}
 	public ElementalMatrix(float base)
 	{
-		this.matrix = new ArrayList<Float>();
+		this.matrix = new HashMap<Element, Float>();
 		completeArray(base);
 	}	
-	/**
-	 * this constructor will use the list given and add 1.0 to each other unknown elements
-	 * @param matrix <i>ArrayList<Float></i> matrix that will be use.
-	 */
-	public ElementalMatrix(List<Float> matrix)
+
+	public ElementalMatrix(Map<Element, Float> matrix)
 	{
-		this.matrix = matrix;
-		completeArray();
-	}
-	
-	public ElementalMatrix(Float[] valueMatrix)
-	{
-		this.matrix = new ArrayList<Float>(Arrays.asList(valueMatrix));
+		this.matrix = new HashMap<Element, Float>(matrix);
 		completeArray();
 	}
 
@@ -103,14 +96,16 @@ public abstract class ElementalMatrix implements IElementalWritable
 	
 	protected ElementalMatrix completeArray(float defaultValue)
 	{
-		for(int index = matrix.size(); index < Element.getNumberOfElement(); index ++)
+		// for each key in Element
+		for(Element element : Element.getAllElement())
 		{
-			matrix.add(defaultValue);
+			if(!matrix.containsKey(element))
+				matrix.put(element, defaultValue);
 		}
 		return this;
 	}
 	
-	public List<Float> getMatrix()
+	public Map<Element, Float> getMatrix()
 	{
 		return this.matrix;
 	}
@@ -119,37 +114,40 @@ public abstract class ElementalMatrix implements IElementalWritable
 	 * (matrix is supposed already full, so their are not add statement available)
 	 * wrong tentative will not delete 
 	 * 
-	 * @param index <i>int</i> index you want to change. Use Element.getIndex(String) or Element.constante to get the correct index.
+	 * @param index <i>int</i> index you want to change. you can also put and Element instead
 	 * @param value <i>float</i> value that you want to add to this matrix
 	 * @return itself
 	 */
 	public ElementalMatrix set(int index, float value)
 	{
-		if(matrix.size() > index)
-			matrix.set(index, value);
-		else
-			JLog.alert("Index " + index + "does not exist in matrix " + this.toString());
+		return set(Element.findById(index), value);
+	}
+	public ElementalMatrix set(Element index, float value)
+	{
+		matrix.put(index, value);
 		return this;
 	}
 	
+	
 	public Float get(int index)
 	{
-		if(matrix.size() < index)
-			return null;
-		else
-			return matrix.get(index);
+		return get(Element.findById(index));
 	}
-
+	public Float get(Element index)
+	{
+		return matrix.getOrDefault(index, null);
+	}
+	
 	@Override
 	public String toString()
 	{
 		String text = "";
 		
-		for(int i = 0; i < matrix.size(); i++)
+		for(Entry<Element, Float> entry : matrix.entrySet())
 		{
-			text += Element.getKey(i);
+			text += entry.getKey();
 			text += ":";
-			text += matrix.get(i);
+			text += entry.getValue();
 			text += ";";
 		}
 		
@@ -160,10 +158,11 @@ public abstract class ElementalMatrix implements IElementalWritable
 	@Override
 	public void fromJsonObject(JsonObject j)
 	{
-		for(String key: Element.getKeyName())
+		for(Element element : Element.getAllElement())
 		{
+			String key = element.getName();
 			if(j.has(key))
-				this.set(Element.getIndex(key), j.get(key).getAsFloat());
+				this.set(element, j.get(key).getAsFloat());
 		}
 		completeArray();
 	}
@@ -172,9 +171,9 @@ public abstract class ElementalMatrix implements IElementalWritable
 	public JsonObject toJsonObject()
 	{
 		JsonObject j = new JsonObject();
-		for(int i = 0; i < matrix.size(); i++)
+		for(Element element : Element.getAllElement())
 		{
-			j.addProperty(Element.getKey(i), matrix.get(i));
+			j.addProperty(element.getName(), matrix.get(element));
 		}
 		
 		return j;
@@ -183,11 +182,21 @@ public abstract class ElementalMatrix implements IElementalWritable
 	@Override
 	public void toByte(ByteBuf buf) 
 	{
+		/* Value write in buffer : 
+		 * Int => number of item (length)
+		 * ----------------------------------
+		 * Int => index for next value
+		 * Float => value 
+		 * ----------------------------------
+		 * repeat 'length' time
+		 */
+		
 		int length = matrix.size();
 		buf.writeInt(length);
-		for(float value : matrix)
+		for(Entry<Element, Float> value : matrix.entrySet())
 		{
-			buf.writeFloat(value);
+			buf.writeInt(value.getKey().getId());
+			buf.writeFloat(value.getValue());
 		}
 	}
 	
@@ -198,7 +207,9 @@ public abstract class ElementalMatrix implements IElementalWritable
 		int length = buf.readInt();
 		for(int i = 0; i < length; i++)
 		{
-			this.matrix.add(i, buf.readFloat());
+			int key = buf.readInt();
+			float value = buf.readFloat();
+			this.matrix.put(Element.findById(key), value);
 		}
 	}
 
@@ -229,7 +240,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 	 * @param entity <i>Entity</i>
 	 * @return
 	 */
-	public float getDamageFromEntity(EntityLivingBase entity)
+	public float getDamageFromEntity(EntityLivingBase entity, float oldValue)
 	{
 		float baseDamage = 0.0F;
 		
@@ -239,26 +250,38 @@ public abstract class ElementalMatrix implements IElementalWritable
 		}
 		else
 		{
-			// here we have some problem...  Damage is write under code, and is unreachable...
-			if(entity instanceof EntitySnowman)
-			{
-				baseDamage = 0.0F;
-			}
-			else if(entity instanceof EntityIronGolem)
-			{
-				baseDamage = 7 + new Random().nextInt(15);
-			}
-			else if(entity instanceof EntityShulker)
-			{
-				baseDamage = 1 + new Random().nextInt(3);
-			}
-			else
-			{
-				baseDamage = 5 + new Random().nextInt(5);
-				JLog.alert("Entity " + entity.getClass() + " is not a reference to a know vanilla Golem. A Random value between 5 and 10 will be used.");
-			}
+			JLog.warning("No attribut Damage available... Old value will be used... ");
+			//TODO find a better way...
+			return oldValue;
 		}
 		
 		return baseDamage;
+	}
+	
+	/**
+	 * 
+	 * @param target
+	 * @param clazz
+	 */
+	protected void updateEntity(Entity target, Class<? extends ElementalMatrix> clazz) 
+	{
+		boolean atLeastOne = false;
+		for(Element element : Element.getAllElement())
+		{
+			// Warning : Float is an object, so it can be null.
+			Float value = element.getDefaultValue(clazz, target.getClass(), matrix.get(element));
+			if(value != null)
+			{
+				// if we have a value, we put it.
+				matrix.put(element, value);
+				if(element.isActive())
+					atLeastOne = true;
+			}
+		}
+		
+		if(!atLeastOne)
+		{
+			matrix.put(Element.addOrGet("normal"), 1.0F);
+		}
 	}
 }

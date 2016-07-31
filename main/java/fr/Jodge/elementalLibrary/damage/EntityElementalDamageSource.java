@@ -1,5 +1,6 @@
 package fr.Jodge.elementalLibrary.damage;
 
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalDamageSource;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -9,7 +10,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
 
-public class EntityElementalDamageSource extends EntityDamageSource
+public class EntityElementalDamageSource extends EntityDamageSource implements IElementalDamageSource
 {
 	protected FinalMatrix damageMatrix;
 	
@@ -23,12 +24,14 @@ public class EntityElementalDamageSource extends EntityDamageSource
 	{
 		this(oldSource.getDamageType(), oldSource.getEntity(), damageMatrix);
 	}
-
+	
+	@Override
 	public FinalMatrix getDamageMatrix() 
 	{
 		return damageMatrix;
 	}
 	
+	// TODO change death message
     @Override
 	public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn)
     {

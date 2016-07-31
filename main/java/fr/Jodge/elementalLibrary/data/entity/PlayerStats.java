@@ -20,7 +20,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
-import fr.Jodge.elementalLibrary.ElementalConstante;
+import fr.Jodge.elementalLibrary.ElementalConfiguration;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class PlayerStats extends AbstractStats
@@ -28,7 +29,6 @@ public class PlayerStats extends AbstractStats
 	public UUID uuid;
 	
 	public static final String folder = "playerdata\\";
-	public static final String extention = ".eld";
 	
 	public PlayerStats(UUID uuid) 
 	{
@@ -40,7 +40,7 @@ public class PlayerStats extends AbstractStats
 	{
 		this(target.getUniqueID());
 		MinecraftServer server = target.getServer();
-		String url = folder + target.getUniqueID() + extention;
+		String url = folder + target.getUniqueID() + ElementalConfiguration.EXTENTION;
 		data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 		makeByFile();
 	}

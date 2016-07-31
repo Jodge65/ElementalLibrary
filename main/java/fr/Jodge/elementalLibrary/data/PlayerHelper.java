@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.entity.PlayerStats;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

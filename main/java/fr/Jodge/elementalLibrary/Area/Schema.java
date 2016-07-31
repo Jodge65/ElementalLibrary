@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.Area;
+package fr.Jodge.elementalLibrary.area;
 
 import java.io.BufferedReader;
 import java.io.File;

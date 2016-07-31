@@ -1,16 +1,20 @@
 package fr.Jodge.elementalLibrary.damage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import fr.Jodge.elementalLibrary.Element;
-import fr.Jodge.elementalLibrary.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -40,21 +44,19 @@ import net.minecraft.util.math.MathHelper;
 
 public class DamageHelper 
 {
-
-
-	public static FinalMatrix calculDamage(EntityLivingBase attacker, EntityLivingBase targetEntity)
+	public static FinalMatrix calculDamage(EntityLivingBase attacker, EntityLivingBase targetEntity, float oldValue)
 	{
-
 		// init
-		List<Float> damageByElement = new ArrayList<Float>();
+		Map<Element, Float> damageByElement = new HashMap<Element, Float>();
 		
-		DataParameter atkKey = ElementalConstante.getDataKeyForEntity(attacker, AttackMatrix.class);
+		DataParameter atkKey = Getter.getDataKeyForEntity(attacker, AttackMatrix.class);
 		AttackMatrix atkMatrix = attacker.getDataManager().get(atkKey);
 		
-		DataParameter resistKey = ElementalConstante.getDataKeyForEntity(targetEntity, DefenceMatrix.class);
+		DataParameter resistKey = Getter.getDataKeyForEntity(targetEntity, DefenceMatrix.class);
 		DefenceMatrix resistMatrix = targetEntity.getDataManager().get(resistKey);
 		
 		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
+		environnementMatrix.autoUptdate(attacker);
 		
 		DamageMatrix damageMatrix;
 		
@@ -68,35 +70,35 @@ public class DamageHelper
 		{
 			Item activeItem = itemStack.getItem();
 			
-			damageMatrix = ElementalConstante.getMatrixForItem(activeItem);
+			damageMatrix = Getter.getDamageBruteFromItem(activeItem);
 			if(damageMatrix == null)
 			{
 				damageMatrix = new DamageMatrix(0.0F);
-				damageMatrix.autoUpdateDamage(attacker);
+				damageMatrix.autoUpdateDamage(attacker, oldValue);
 			}
 		}
 		else
 		{
 			damageMatrix = new DamageMatrix(0.0F);
-			damageMatrix.autoUpdateDamageHand(attacker);
+			damageMatrix.autoUpdateDamageHand(attacker, oldValue);
 		}
 	
-		for(int index = 0; index < Element.getNumberOfElement(); index ++)
+		for(Element element : Element.getAllElement() )
 		{
 			float theoriqueDamage = 0.0F;
-			float damage = damageMatrix.get(index);
+			float damage = damageMatrix.get(element);
 			if(damage != 0.0F)
 			{
 				//String currentElementName = Element.getKey(index);
-				float atkMultiplier = atkMatrix.get(index);
-				float resDivider = resistMatrix.get(index);
-				float enviMultiplier = environnementMatrix.get(index);
+				float atkMultiplier = atkMatrix.get(element);
+				float resDivider = resistMatrix.get(element);
+				float enviMultiplier = environnementMatrix.get(element);
 				
 				theoriqueDamage = damage * atkMultiplier * resDivider * enviMultiplier;
 			}
-			damageByElement.add(theoriqueDamage);
+			damageByElement.put(element, theoriqueDamage);
 		}
-		
+		FinalMatrix returnValue = new FinalMatrix(damageByElement);
 
 		if(!attacker.worldObj.isRemote)
 		{
@@ -107,7 +109,7 @@ public class DamageHelper
 			JLog.write("Matrix ATK   : " + atkMatrix.toString());
 			JLog.write("Matrix DEF   : " + resistMatrix.toString());
 			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
-			JLog.write("Matrix FINAL : " + damageByElement.toString());
+			JLog.write("Matrix FINAL : " + returnValue.toString());
 		}
 		else
 		{
@@ -118,30 +120,29 @@ public class DamageHelper
 			JLog.write("Matrix ATK   : " + atkMatrix.toString());
 			JLog.write("Matrix DEF   : " + resistMatrix.toString());
 			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
-			JLog.write("Matrix FINAL : " + damageByElement.toString());
-		}
-
-		
-		return new FinalMatrix(damageByElement);
+			JLog.write("Matrix FINAL : " + returnValue.toString());
+		}		
+		return returnValue;
 
 	}
 	
+
 	/**
-	 * Same as the first but whit a list of entity instead
+	 * Change Damage Calculation based on oldSource. Applied to a list of entity.
 	 * 
-	 * @param player <i>Entity</i>
-	 * @param entityList
+	 * @param calculDamage <i>List<Float></i> calculDamage 
+	 * @param attacker <i>Entity</i> entity which deal damage (can be anything like falling sand)
+	 * @param entityList <i>List<? extends EntityLivingBase></i> target living entity beat
+	 * @param oldSource <i>EntityDamageSource</i> oldSource previous source to erase and modify
 	 */
-	public static void dealDamage(EntityLivingBase player, List entityList, EntityDamageSource oldSource)
+	public static void dealDamage(EntityLivingBase player, List<? extends EntityLivingBase> entityList, EntityDamageSource oldSource, float oldDamage)
 	{
 		EntityLivingBase entity;
 		for (int i = 0; i < entityList.size(); i++)
 		{
-			if(entityList.get(i) instanceof EntityLivingBase)
-			{
-				entity = (EntityLivingBase) entityList.get(i);
-				DamageHelper.dealDamage(player, entity, oldSource);	
-			}
+			entity = entityList.get(i);
+			FinalMatrix damageMatrix = DamageHelper.calculDamage(player, entity, oldDamage);
+			DamageHelper.dealDamage(player, entity, oldSource, damageMatrix);	
 		}
 	}
 		
@@ -155,9 +156,6 @@ public class DamageHelper
 	 */
 	public static void dealDamage(Entity attacker, EntityLivingBase target, EntityDamageSource oldSource, FinalMatrix calculDamage)
 	{
-
-
-		
 		if(calculDamage.getTotalDamage() != 0.0F)
 		{
 			if(attacker instanceof IRangedAttackMob && oldSource instanceof EntityDamageSourceIndirect )
@@ -166,7 +164,7 @@ public class DamageHelper
 			}
 			else
 			{
-				
+				// TODO change method to work whit IProjectile without rebound effect
 			}
 			target.attackEntityFrom(new EntityElementalDamageSource(oldSource, calculDamage), calculDamage.getTotalDamage());
 		}
@@ -223,14 +221,19 @@ public class DamageHelper
         attacker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (attacker.getRNG().nextFloat() * 0.4F + 0.8F));
         attacker.worldObj.spawnEntityInWorld((Entity) projectile);
 	}
-	
-	public static void dealDamage(EntityLivingBase attacker, EntityLivingBase target, EntityDamageSource oldSource)
-	{
-		dealDamage(attacker, target, oldSource, calculDamage(attacker, target));
-	}
-	
+		
 	public static boolean criticalHit(Entity playerIn, ItemStack itemstack)
 	{
 		return false;
 	}
+
+
+	public static void ElementalizeDamageSource(EntityLivingBase target, DamageSource source, float amount) 
+	{
+		FinalMatrix newMatrix = Getter.getElementalizeDamageSource(source, amount);
+		newMatrix.updateCalculation();
+		target.attackEntityFrom(new ElementalDamageSource(source, newMatrix), newMatrix.getTotalDamage());
+	}
+	
+	
 }

@@ -1,6 +1,7 @@
 package fr.Jodge.elementalLibrary;
 
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.event.DamageEvent;
 import fr.Jodge.elementalLibrary.event.DataEvent;
 import fr.Jodge.elementalLibrary.function.JLog;
@@ -63,14 +64,14 @@ public class Main
 		JLog.write("[ ### ---        --- ### ]");
 		JLog.write("");
 		
-		ElementalConstante.init.onPreLoad();
+		ElementalConstante.onPreLoad();
 		
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		ElementalConstante.init.onLoad();
+		ElementalConstante.onLoad();
 		
 		proxy.registerRender();
 		
@@ -82,20 +83,21 @@ public class Main
 
 		configFile.onInit();
 		
+		/*
 		if (event.getSide().isClient()) // Client
 		{
 		}
 		else // Serveur
 		{
 		}
-		
+		*/
 
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		ElementalConstante.init.onAfterLoad();
+		ElementalConstante.onAfterLoad();
 
 		
 		configFile.onPostInit();
@@ -114,5 +116,26 @@ public class Main
 	protected static String getContact()
 	{
 		return "joey.sarie@gmail.com";
+	}
+	
+	public static void main(String[ ] args)
+	{
+		// Do Some Test
+		ElementalConfiguration.WINDOW_DEBUG = true;
+		ElementalConfiguration.DEBUG = true;
+		DEBUG_WINDOWS = new ElementalLibraryDebug();
+		JLog.write("[ ### --- INFO --- ### ]");
+		JLog.write("Name : " + MODNAME);
+		JLog.write("Modid : " + MODID);
+		JLog.write("ModVer : " + MODVER);
+		JLog.write("Author : " + getAuthor());
+		JLog.write("e-mail : " + getContact());
+		JLog.write("[ ### ---        --- ### ]");
+		JLog.write("");		
+		JLog.write("START OF TEST.");
+		
+		// Add some debug information ?
+		
+		JLog.write("END OF TEST.");
 	}
 }

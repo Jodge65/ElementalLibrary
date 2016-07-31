@@ -2,12 +2,15 @@ package fr.Jodge.elementalLibrary.data.matrix;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import scala.actors.threadpool.Arrays;
 import io.netty.buffer.ByteBuf;
-import fr.Jodge.elementalLibrary.Element;
-import fr.Jodge.elementalLibrary.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -56,39 +59,34 @@ public class DamageMatrix extends ElementalMatrix
 		super(base);
 	}	
 
-	public DamageMatrix(List<Float> matrix)
+	public DamageMatrix(Map<Element, Float> matrix)
 	{
 		super(matrix);
 	}
 	
-	public DamageMatrix(Float[] valueMatrix)
-	{
-		super(valueMatrix);
-	}
-
 	@Override
 	public void autoUptdate(Entity target)
 	{
 	}
 		
-	public void autoUpdateDamage(EntityLivingBase entity) 
+	public void autoUpdateDamage(EntityLivingBase entity, float oldValue) 
 	{
-		matrix.set(Element.NORMAL, getDamageFromEntity(entity));
+		matrix.put(Element.addOrGet("normal"), getDamageFromEntity(entity, oldValue));
 	}
 	
-	public void autoUpdateDamageHand(EntityLivingBase entity) 
+	public void autoUpdateDamageHand(EntityLivingBase entity, float oldValue) 
 	{
-		float baseDamage = getDamageFromEntity(entity);
+		float baseDamage = getDamageFromEntity(entity, oldValue);
 		
-		ElementalMatrix atkMatrix = entity.getDataManager().get(ElementalConstante.getDataKeyForEntity(entity, AttackMatrix.class));
+		ElementalMatrix atkMatrix = entity.getDataManager().get(Getter.getDataKeyForEntity(entity, AttackMatrix.class));
 
-		int bestBonus = Element.NORMAL;
-		for(int i = 0; i < Element.getNumberOfElement(); i++)
+		Element bestBonus = Element.addOrGet("normal");
+		for(Element element : Element.getAllActiveElement())
 		{
-			if(atkMatrix.get(bestBonus) < atkMatrix.get(i))
-				bestBonus = i;
+			if(atkMatrix.get(bestBonus) < atkMatrix.get(element))
+				bestBonus = element;
 		}
-		matrix.set(bestBonus, baseDamage);
+		matrix.put(bestBonus, baseDamage);
 
 	}
 	

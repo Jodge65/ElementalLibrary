@@ -31,16 +31,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public abstract class AbstractStats
 {
-	/** integer refers to one of int ElementalConstante.CONSTANTE */
 	protected Map<Class, IElementalWritable> value;
 	
-	public List<Pair<Class, IElementalWritable>> listOfAvailableStats;
+	public List<Class<? extends IElementalWritable>> listOfAvailableStats;
 	
 	public Entity entity;
 	public File data;
@@ -50,14 +49,14 @@ public abstract class AbstractStats
 	
 	public ByteBuf buf;
 
-	public AbstractStats(List<Pair<Class, IElementalWritable>> LIST_OF_STATS)
+	public AbstractStats(List<Class<? extends IElementalWritable>> LIST_OF_STATS)
 	{
 		this.value = new HashMap<Class, IElementalWritable>();
 		this.succes = true;
 		this.listOfAvailableStats = LIST_OF_STATS;
 	}
 	
-	public List<Pair<Class, IElementalWritable>> getListOfAvailableStats(){return this.listOfAvailableStats;}
+	public List<Class<? extends IElementalWritable>> getListOfAvailableStats(){return this.listOfAvailableStats;}
 	
 	protected void makeByFile()
 	{
@@ -95,18 +94,16 @@ public abstract class AbstractStats
 	 */
 	protected boolean CreateNew(boolean doINeedSave) 
 	{
-		for(Pair<Class, IElementalWritable> coupleOfValue : listOfAvailableStats)
+		for(Class<? extends IElementalWritable> clazz : listOfAvailableStats)
 		{
 			try 
 			{
-				JsonObject jsonObjet = coupleOfValue.getValue().toJsonObject();
-				IElementalWritable objet = coupleOfValue.getValue().getClass().getConstructor().newInstance();
-				objet.fromJsonObject(jsonObjet);
-				value.put(coupleOfValue.getKey(), objet);
+				IElementalWritable objet = clazz.newInstance();
+				value.put(clazz, objet);
 			}  
 			catch (Exception e) 
 			{
-				JLog.error("Can't create and use default constructor for " + coupleOfValue.getValue());
+				JLog.error("Can't create and use default constructor for " + clazz);
 			}
 		}
 		
@@ -169,14 +166,17 @@ public abstract class AbstractStats
 				{
 
 					JsonObject finalObject = new JsonObject();
-					
-					for(Pair<Class, IElementalWritable> coupleOfValue : listOfAvailableStats)
+					for(Class<? extends IElementalWritable> clazz : listOfAvailableStats)
 					{
-						String key = coupleOfValue.getValue().getClass().getName();
-						JsonObject value = coupleOfValue.getValue().toJsonObject();
-						finalObject.add(key, value);
+						IElementalWritable instance = value.get(clazz);
+						if(instance != null)
+						{
+							JsonObject jsonValue = instance.toJsonObject();
+							finalObject.add(clazz.getName(), jsonValue);
+						}
+
 					}
-					
+
 					String finalString = finalObject.toString();
 					
 					if(!ElementalConfiguration.USE_RAW_JSON)
@@ -211,7 +211,7 @@ public abstract class AbstractStats
 						}
 						if(succes)
 						{
-							JLog.info("Succefuly save data for at " + data.getName());
+							JLog.info("Succefuly save data for " + entity + " in file " + data.getName());
 
 						}
 					}
@@ -255,14 +255,14 @@ public abstract class AbstractStats
 			// if we finaly get the json file !
 			if(succes)
 			{
+				
 				// for each object... I guess
-				for(Pair<Class, IElementalWritable> coupleOfValue : listOfAvailableStats)
+				for(Class<? extends IElementalWritable> clazz : listOfAvailableStats)
 				{
 					// we want a class that extend IElementalWritable
-					Class<? extends IElementalWritable> currentClass = coupleOfValue.getValue().getClass();
 					
 					// we use class name to send
-					String key = currentClass.getName();
+					String key = clazz.getName();
 					// get current object if exist...
 					JsonObject currentObject = finalobject.getAsJsonObject(key);
 					
@@ -271,13 +271,13 @@ public abstract class AbstractStats
 						IElementalWritable objet;
 						try 
 						{
-							objet = currentClass.getConstructor().newInstance();
+							objet = clazz.newInstance();
 							objet.fromJsonObject(currentObject);
-							add(coupleOfValue.getKey(), objet);
+							add(clazz, objet);
 						}
 						catch (Exception e) 
 						{
-							JLog.error("Somethink wrong happen during when try to create new instance of " + currentClass.getName());
+							JLog.error("Somethink wrong happen when try to create new instance of " + clazz.getName());
 						}
 					}
 					else
@@ -311,7 +311,13 @@ public abstract class AbstractStats
 	 */
 	public IElementalWritable getStat(Class key)
 	{
-		return value.getOrDefault(key, null);
+		return value.get(key);
+	}
+	
+	@Deprecated
+	public IElementalWritable get(Class key)
+	{
+		return getStat(key);
 	}
 	
 	@Override
@@ -319,16 +325,13 @@ public abstract class AbstractStats
 	{
 		String text = "";
 		
-		for(Pair<Class, IElementalWritable> coupleOfValue : listOfAvailableStats)
+		for(Class<? extends IElementalWritable> clazz : listOfAvailableStats)
 		{
-			text += getStat(coupleOfValue.getKey()).toString() + "\n";
+
+			text += getStat(clazz).toString() + "\n";
 		}
 		
 		return text;
 	}
 
-	public IElementalWritable get(Class key)
-	{
-		return value.getOrDefault(key, null);
-	}
 }

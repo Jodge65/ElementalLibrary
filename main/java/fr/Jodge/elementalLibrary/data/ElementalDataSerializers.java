@@ -3,10 +3,10 @@ package fr.Jodge.elementalLibrary.data;
 import java.lang.reflect.InvocationTargetException;
 
 import scala.Int;
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.BufUtils;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;

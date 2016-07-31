@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
 import fr.Jodge.elementalLibrary.data.entity.PlayerStats;
@@ -15,6 +14,7 @@ import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -49,24 +49,21 @@ public class PlayerStatsPacket implements IMessage
 
 		stats = new PlayerStats(uuid);
 		
-		for(Pair<Class, IElementalWritable> coupleOfValue : ElementalConstante.PLAYER_STATS)
+		for(Class<? extends IElementalWritable> clazz : ElementalConstante.PLAYER_STATS)
 		{
-			// this is use to access the correct createByString method
-			IElementalWritable obj = coupleOfValue.getValue();
-			
 			// we create an new object base. Function on createByString is suppose to made a new object !
-			IElementalWritable newObject;
+			IElementalWritable object;
 			try 
 			{
-				newObject = obj.getClass().getConstructor().newInstance();
-		   		newObject.fromByte(buf);
+				object = clazz.newInstance();
+				object.fromByte(buf);
 				
 				// we add stats here
-				stats.add(coupleOfValue.getKey(), newObject);
+				stats.add(clazz, object);
 			} 
 			catch (Throwable throwable) 
 			{
-				String text = "Can't create value from " + obj.getClass();
+				String text = "Can't create value from " + clazz;
 				JLog.crashReport(throwable, text);
 			}
 		}
@@ -78,9 +75,9 @@ public class PlayerStatsPacket implements IMessage
 		BufUtils.writeUUID(buf, stats.uuid);
 
 		// ElementalConstante.PLAYER_STATS is suppose to have every IElementalWritable that can be write in buffer
-		for(Pair<Class, IElementalWritable> coupleOfValue : ElementalConstante.PLAYER_STATS)
+		for(Class<? extends IElementalWritable> clazz : ElementalConstante.PLAYER_STATS)
 		{	
-			IElementalWritable obj = stats.get(coupleOfValue.getKey());
+			IElementalWritable obj = stats.get(clazz);
 			obj.toByte(buf);
 		}
 	}

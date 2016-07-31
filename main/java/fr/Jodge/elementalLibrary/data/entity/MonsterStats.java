@@ -27,8 +27,8 @@ import com.google.gson.JsonObject;
 
 import scala.reflect.io.Directory;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class MonsterStats extends AbstractStats
@@ -86,29 +86,17 @@ public class MonsterStats extends AbstractStats
 	@Override
 	protected boolean CreateNew() 
 	{
-		for(Pair<Class, IElementalWritable> coupleOfValue : listOfAvailableStats)
+		if(super.CreateNew(false))
 		{
-			boolean canBeUptdate = true;
-			IElementalWritable objet = null;
-			try 
+			for(IElementalWritable objet : value.values())
 			{
-				JsonObject jsonObjet = coupleOfValue.getValue().toJsonObject();
-				objet = coupleOfValue.getValue().getClass().getConstructor().newInstance();
-				objet.fromJsonObject(jsonObjet);
-				value.put(coupleOfValue.getKey(), objet);
-			}  
-			catch (Exception e) 
-			{
-				canBeUptdate = false;
-				JLog.error("Can't create and use default constructor for " + coupleOfValue.getValue());
-			}
-			
-			if(canBeUptdate)
 				objet.autoUptdate(entity);
+			}
 
+			save();
+			return true;
 		}
-		
-		save();
-		return true;
+
+		return false;
 	}
 }

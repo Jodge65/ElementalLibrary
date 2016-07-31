@@ -2,13 +2,14 @@ package fr.Jodge.elementalLibrary.data.matrix;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import scala.actors.threadpool.Arrays;
 import io.netty.buffer.ByteBuf;
-import fr.Jodge.elementalLibrary.Element;
-import fr.Jodge.elementalLibrary.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.interfaces.IMonsterMatrix;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.register.Getter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -49,159 +50,33 @@ public class AttackMatrix extends ElementalMatrix
 
 	public AttackMatrix()
 	{
-		this(1.0F);
+		this(0.75F);
 	}
 	public AttackMatrix(float base)
 	{
 		super(base);
 	}	
 
-	public AttackMatrix(List<Float> matrix)
+	public AttackMatrix(Map<Element, Float> matrix)
 	{
 		super(matrix);
-	}
-	
-	public AttackMatrix(Float[] valueMatrix)
-	{
-		super(valueMatrix);
 	}
 
 	@Override
 	public void autoUptdate(Entity target)
 	{
-		if(target instanceof IMonsterMatrix)
-		{
-			matrix = ((IMonsterMatrix)target).getAtkMatrix().matrix;
-			return;
-		}
+		AttackMatrix defaultMatrix = Getter.getDamagePercentFromEntity(target);
 		
-		
-		matrix.set(Element.NORMAL, 0.75F);
-
-		// FROM HERE MONSTER
-		if(target instanceof EntityBlaze)
+		if(defaultMatrix != null)
 		{
-			matrix.set(Element.FIRE, 1.5F);
+			// if defaultMatrix is not null, then we already have a default value.
+			matrix = defaultMatrix.matrix;
 		}
-		else if(target instanceof EntityCaveSpider)
+		else
 		{
-			
-		}
-		else if(target instanceof EntityCreeper)
-		{
-			matrix.set(Element.FIRE, 1.1F);
-		}
-		else if(target instanceof EntityEnderman)
-		{
-			matrix.set(Element.DARK, 1.1F);
-		}
-		else if(target instanceof EntityEndermite)
-		{
-			matrix.set(Element.DARK, 1.1F);
-		}
-		else if(target instanceof EntityGhast)
-		{
-			matrix.set(Element.FIRE, 1.1F);
-		}
-		else if(target instanceof EntityGiantZombie)
-		{
-			matrix.set(Element.DIRT, 1.75F);
-		}
-		else if(target instanceof EntityGolem)
-		{
-			matrix.set(Element.DIRT, 1.75F);
-		}
-		else if(target instanceof EntityGuardian)
-		{
-			matrix.set(Element.WATER, 1.1F);
-		}
-		else if(target instanceof EntityMagmaCube)
-		{
-			matrix.set(Element.FIRE, 1.1F);
-		}
-		else if(target instanceof EntityPigZombie)
-		{
-			matrix.set(Element.FIRE, 1.1F);
-		}
-		else if(target instanceof EntityShulker)
-		{
-		}
-		else if(target instanceof EntitySilverfish)
-		{
-		}
-		else if(target instanceof EntitySkeleton)
-		{
-			matrix.set(Element.DARK, 1.1F);
-		}
-		else if(target instanceof EntitySlime)
-		{
-			matrix.set(Element.WATER, 1.1F);
-		}
-		else if(target instanceof EntitySnowman)
-		{
-		}
-		else if(target instanceof EntitySpider)
-		{
-		}
-		else if(target instanceof EntityWitch)
-		{
-		}
-		else if(target instanceof EntityZombie)
-		{
-			matrix.set(Element.DARK, 1.1F);
-		}
-		// FROM HERE BANAL MOB
-		else if(target instanceof EntityBat)
-		{
-		}
-		else if(target instanceof EntityChicken)
-		{
-		}
-		else if(target instanceof EntityCow)
-		{
-			matrix.set(Element.DIRT, 1.1F);
-		}
-		else if(target instanceof EntityHorse)
-		{
-			matrix.set(Element.DIRT, 1.1F);
-		}
-		else if(target instanceof EntityMooshroom)
-		{
-		}
-		else if(target instanceof EntityOcelot)
-		{
-			matrix.set(Element.WIND, 1.1F);
-		}
-		else if(target instanceof EntityPig)
-		{
-		}
-		else if(target instanceof EntityRabbit)
-		{
-		}
-		else if(target instanceof EntitySheep)
-		{
-		}
-		else if(target instanceof EntitySquid)
-		{
-			matrix.set(Element.WATER, 1.1F);
-		}
-		else if(target instanceof EntityVillager)
-		{
-		}
-		else if(target instanceof EntityWolf)
-		{
-		}
-		// FROM HERE BOSS
-		else if (target instanceof EntityDragon)
-		{
-			matrix.set(Element.FIRE, 1.5F);
-			matrix.set(Element.WIND, 0.75F);
-		}
-		else if (target instanceof EntityWither)
-		{
-			matrix.set(Element.DARK, 1.5F);
-			matrix.set(Element.FIRE, 0.75F);
-		}
-	}
+			// if defaultMatrix is null, we don't have any default value... So we initialize it.
+			super.updateEntity(target, this.getClass());
+		} // end of else no default matrix
+	} // end of auto update
 
 }

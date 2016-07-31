@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.Area;
+package fr.Jodge.elementalLibrary.area;
 
 import java.util.ArrayList;
 import java.util.List;

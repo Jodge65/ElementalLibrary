@@ -9,10 +9,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.EntityDataManager.DataEntry;
-import fr.Jodge.elementalLibrary.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 
@@ -29,8 +30,7 @@ public class DataHelper
 	public static DataParameter addEntityElement(EntityLivingBase target, IElementalWritable element)
 	{
 		EntityDataManager targetData = target.getDataManager();
-		
-		DataParameter key = ElementalConstante.getDataKeyForEntity(target, element.getClass());
+		DataParameter key = Getter.getDataKeyForEntity(target, element.getClass());
 		
 		boolean isNotExisting = true;
 		for(DataEntry entry : targetData.getAll())
@@ -69,9 +69,9 @@ public class DataHelper
 	 */
 	public static void initEntityMatrix(EntityLivingBase target, AbstractStats stats)
 	{
-		for(Pair<Class, IElementalWritable> coupleOfValue : stats.getListOfAvailableStats())
+		for(Class<? extends IElementalWritable> clazz : stats.listOfAvailableStats)
 		{
-			addEntityElement(target, coupleOfValue.getValue());
+			addEntityElement(target, stats.getStat(clazz));
 		}
 	}
 	
