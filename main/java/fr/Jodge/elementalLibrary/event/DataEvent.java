@@ -13,6 +13,8 @@ import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -98,10 +100,9 @@ public class DataEvent
 	@SubscribeEvent
 	public void onClientConnectToServer(ServerConnectionFromClientEvent event)
 	{
+		// Send data SERVER SIDE
 		JLog.info("Client Connecting");
 		Packet packetIn = Main.constante.STATS_SOCKET.getPacketFrom(new InitElementPacket());
 		event.getManager().sendPacket(packetIn);
-		// give data (SERVER SIDE)
-		Main.constante.onClientJoin();
 	}
 }

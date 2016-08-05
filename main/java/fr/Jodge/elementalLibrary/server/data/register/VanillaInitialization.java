@@ -16,7 +16,6 @@ import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.register.Register;
 
-@SideOnly(Side.SERVER)
 public class VanillaInitialization 
 {
 	/**

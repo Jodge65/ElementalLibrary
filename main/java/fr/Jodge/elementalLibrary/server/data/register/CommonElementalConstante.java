@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.data.register;
+package fr.Jodge.elementalLibrary.server.data.register;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +23,9 @@ import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
 import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
+import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.function.JLog;
-import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
@@ -107,13 +108,17 @@ public class CommonElementalConstante extends Variable
 		JLog.info(" --- POSTINIT --- ");
 
 	}	
-	
-	// nothing common
-	public void onClientJoin(){}
-	
+
 	// nothing common
 	public void onClientExit() {}
 
-	// nothing common
-	public void onServerStart(){}
+	/**
+	 * What you need to do : 
+	 * 
+	 */	public void onServerStart()
+	{
+		// WARNING : integrated server work whit proxy on ClienSide.
+		JLog.info(" --- SERVER START --- ");
+		VanillaInitialization.initElement();
+	}
 }

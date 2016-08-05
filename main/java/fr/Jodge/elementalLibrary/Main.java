@@ -1,10 +1,10 @@
 package fr.Jodge.elementalLibrary;
 
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
-import fr.Jodge.elementalLibrary.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.event.DamageEvent;
 import fr.Jodge.elementalLibrary.event.DataEvent;
 import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
@@ -46,7 +46,7 @@ public class Main
 	@Mod.Instance(Main.MODID)
 	public static Main instance;
 
-	@SidedProxy(clientSide = "fr.Jodge.elementalLibrary.client.data.register.ClientElementalConstante", serverSide = "fr.Jodge.elementalLibrary.server.data.register.ServerElementalConstante")
+	@SidedProxy(clientSide = "fr.Jodge.elementalLibrary.client.data.register.ClientElementalConstante", serverSide = "fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante")
 	public static CommonElementalConstante constante;
 	
 	@Mod.EventHandler

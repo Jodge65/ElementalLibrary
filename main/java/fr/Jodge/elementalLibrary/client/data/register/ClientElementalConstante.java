@@ -17,9 +17,9 @@ import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
-import fr.Jodge.elementalLibrary.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
 
 /**
@@ -36,7 +36,6 @@ public class ClientElementalConstante extends CommonElementalConstante
 	@Override
 	public void onPreLoad()
 	{
-		JLog.info("Welcom Client Side");
 		super.onPreLoad();
 	}
 	
@@ -59,14 +58,7 @@ public class ClientElementalConstante extends CommonElementalConstante
 	{
 		super.onAfterLoad();
 	}	
-	
-	
-	/**
-	 * Nothing to do on client side
-	 */
-	@Override
-	public void onClientJoin(){}
-	
+
 	/**
 	 * purge old data
 	 */
@@ -80,5 +72,14 @@ public class ClientElementalConstante extends CommonElementalConstante
 		JLog.info(" --- END PURGE --- ");
 	}
 	
+	
+	/**
+	 * Nothing special to do on client side, but needed for integrated server...
+	 */
+	@Override
+	public void onServerStart()
+	{
+		super.onServerStart();
+	}
 	
 }
