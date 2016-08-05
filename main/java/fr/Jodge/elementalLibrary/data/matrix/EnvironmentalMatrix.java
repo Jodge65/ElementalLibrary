@@ -8,7 +8,6 @@ import scala.actors.threadpool.Arrays;
 import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -65,26 +64,31 @@ public class EnvironmentalMatrix extends ElementalMatrix
 	}
 	
 	@Override
-	public void autoUptdate(Entity target)
+	public void autoUptdate(Object obj)
 	{
-		BlockPos currentPos = new BlockPos(target);
-		Biome biome = target.worldObj.getBiomeForCoordsBody(currentPos);
+		if(obj instanceof Entity)
+		{
+			Entity target = (Entity)obj;
 		
-		adapteMatrixByTemperature(biome.getFloatTemperature(currentPos));
-		adapteMatrixByRainfall(biome.getRainfall());
-		
-		if(target.isBurning())
-			addOnFireMatrix();
-		if(target.isImmuneToFire())
-			addIsImmuneFireMatrix();
-		if(target.isInWater())
-			addIsOnWaterMatrix();
-		if(target.isWet())
-			addIsWetMatrix();
-		if(target.onGround)
-			addOnGroundMatrix();
-		else
-			addIsFlyingMatrix();
+			BlockPos currentPos = new BlockPos(target);
+			Biome biome = target.worldObj.getBiomeForCoordsBody(currentPos);
+			
+			adapteMatrixByTemperature(biome.getFloatTemperature(currentPos));
+			adapteMatrixByRainfall(biome.getRainfall());
+			
+			if(target.isBurning())
+				addOnFireMatrix();
+			if(target.isImmuneToFire())
+				addIsImmuneFireMatrix();
+			if(target.isInWater())
+				addIsOnWaterMatrix();
+			if(target.isWet())
+				addIsWetMatrix();
+			if(target.onGround)
+				addOnGroundMatrix();
+			else
+				addIsFlyingMatrix();
+		}
 	}
 	
 	protected void adapteMatrixByRainfall(float rainfall) 

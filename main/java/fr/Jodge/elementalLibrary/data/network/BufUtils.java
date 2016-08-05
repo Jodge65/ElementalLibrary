@@ -66,7 +66,7 @@ public class BufUtils extends ByteBufUtils
      */
     public static void writeClass(ByteBuf to, Class c)
     {
-    	String stringClass = c.toString();
+    	String stringClass = c.getName();
     	ByteBufUtils.writeUTF8String(to, stringClass);
     }
 }

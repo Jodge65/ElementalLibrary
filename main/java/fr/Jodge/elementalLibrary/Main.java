@@ -1,16 +1,16 @@
 package fr.Jodge.elementalLibrary;
 
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.event.DamageEvent;
 import fr.Jodge.elementalLibrary.event.DataEvent;
 import fr.Jodge.elementalLibrary.function.JLog;
-import fr.Jodge.elementalLibrary.proxy.CommonProxy;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -18,9 +18,12 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * @author Jodge
  * 
@@ -35,18 +38,21 @@ public class Main
 	public static ConfigurationHelper configFile;
 	public static ElementalLibraryDebug DEBUG_WINDOWS;
 	
+	public static boolean isTinkerConstructLoaded;
+	
 	// this is needed on server side to force class to be loaded.
 	public static DataSerializer ELEMENTAL_SERIALIZER = ElementalDataSerializers.ELEMENTAL_SERIALIZER;
 	
 	@Mod.Instance(Main.MODID)
 	public static Main instance;
-	
-	@SidedProxy(clientSide = "fr.Jodge.elementalLibrary.proxy.ClientProxy", serverSide = "fr.Jodge.elementalLibrary.proxy.CommonProxy")
-	public static CommonProxy proxy;
+
+	@SidedProxy(clientSide = "fr.Jodge.elementalLibrary.client.data.register.ClientElementalConstante", serverSide = "fr.Jodge.elementalLibrary.server.data.register.ServerElementalConstante")
+	public static CommonElementalConstante constante;
 	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		isTinkerConstructLoaded = Loader.isModLoaded("tconstruct");
 		
 		configFile = ConfigurationHelper.getInstance(event);
 		configFile.onPreInit();
@@ -64,17 +70,15 @@ public class Main
 		JLog.write("[ ### ---        --- ### ]");
 		JLog.write("");
 		
-		ElementalConstante.onPreLoad();
+		constante.onPreLoad();
 		
 	}
-
+	
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		ElementalConstante.onLoad();
-		
-		proxy.registerRender();
-		
+		constante.onLoad();
+			
 		MinecraftForge.EVENT_BUS.register(new DamageEvent());
 		JLog.info("New event have been register for DamageEvent");
 
@@ -97,7 +101,7 @@ public class Main
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		ElementalConstante.onAfterLoad();
+		constante.onAfterLoad();
 
 		
 		configFile.onPostInit();
@@ -105,6 +109,12 @@ public class Main
 		JLog.info(" --- ENDINIT --- ");
 	}
 
+	@Mod.EventHandler
+	public void onServerStart(FMLServerStartingEvent event)
+	{
+		constante.onServerStart();
+	}
+	
 	protected static String getAuthorMinecraftName()
 	{
 		return "Jodge65";

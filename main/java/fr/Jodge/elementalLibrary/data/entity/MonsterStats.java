@@ -27,8 +27,8 @@ import com.google.gson.JsonObject;
 
 import scala.reflect.io.Directory;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class MonsterStats extends AbstractStats
@@ -41,7 +41,7 @@ public class MonsterStats extends AbstractStats
 
 	public MonsterStats(int id)
 	{
-		super(ElementalConstante.MONSTER_STATS);
+		super(Main.constante.MONSTER_STATS);
 		this.id = id;
 	}
 	

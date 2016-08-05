@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
@@ -12,7 +14,6 @@ import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.function.JLog;
@@ -158,6 +159,7 @@ public class DamageHelper
 	{
 		if(calculDamage.getTotalDamage() != 0.0F)
 		{
+			appliedDamageEffect(target, calculDamage);
 			if(attacker instanceof IRangedAttackMob && oldSource instanceof EntityDamageSourceIndirect )
 			{
 				distanceDamage((IProjectile)((EntityDamageSourceIndirect)oldSource).getSourceOfDamage(), (EntityLivingBase)attacker, target, calculDamage.getTotalDamage());
@@ -170,9 +172,75 @@ public class DamageHelper
 		}
 
 		if(calculDamage.getTotalHeal() != 0.0F)
+		{
+			appliedHealEffect(target, calculDamage);
 			target.heal(calculDamage.getTotalHeal());
+		}
 	}
 	
+	protected static void appliedHealEffect(EntityLivingBase target, FinalMatrix calculDamage) 
+	{
+		// for each active element
+		for(Element element : Element.getAllActiveElement())
+		{
+			// if damage < 0 : heal
+			if(calculDamage.get(element) < 0)
+			{
+				if(element.asHealEffect())
+				{
+					for(Entry<PotionEffect, Float> effect : element.getHealEffect())
+					{
+						int probability = target.getRNG().nextInt() % 100;
+						if(probability < effect.getValue() * 100)
+						{
+							target.addPotionEffect(effect.getKey());
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	protected static void appliedDamageEffect(EntityLivingBase target, FinalMatrix calculDamage) 
+	{
+		// for each active element
+		for(Element element : Element.getAllActiveElement())
+		{
+			// if damage < 0 : heal
+			if(calculDamage.get(element) > 0)
+			{
+				if(element.asDamageEffect())
+				{
+					for(Entry<PotionEffect, Float> effect : element.getDamageEffect())
+					{
+						int probability = target.getRNG().nextInt(100);
+						if(probability < effect.getValue() * 100)
+						{
+							PotionEffect potion = effect.getKey();
+							if(target.isPotionApplicable(potion))
+							{
+								target.addPotionEffect(potion);
+								JLog.write("### EFFECT APPLYED : " + effect);
+							}
+							//target.isPotionActive(potion.getPotion());
+						}
+					}
+				}
+				if(element.asFireEffect())
+				{
+					int probability = target.getRNG().nextInt(100);
+					if(probability < element.getFireProbability() * 100)
+					{
+						target.setFire(element.getFireDuration());
+					}
+				}
+			}
+		}
+	}
+
+
+
 	/**
 	 * 
 	 * @param projectile <i>projectile</i>
@@ -232,6 +300,7 @@ public class DamageHelper
 	{
 		FinalMatrix newMatrix = Getter.getElementalizeDamageSource(source, amount);
 		newMatrix.updateCalculation();
+		appliedDamageEffect(target, newMatrix);
 		target.attackEntityFrom(new ElementalDamageSource(source, newMatrix), newMatrix.getTotalDamage());
 	}
 	

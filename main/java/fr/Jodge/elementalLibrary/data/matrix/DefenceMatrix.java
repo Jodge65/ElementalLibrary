@@ -8,7 +8,6 @@ import scala.actors.threadpool.Arrays;
 import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
@@ -62,20 +61,25 @@ public class DefenceMatrix extends ElementalMatrix
 	}
 
 	@Override
-	public void autoUptdate(Entity target)
+	public void autoUptdate(Object obj)
 	{
-		DefenceMatrix defaultMatrix = Getter.getDefencePercentFromEntity(target);
-		if(defaultMatrix != null)
+		if(obj instanceof Entity)
 		{
-			// if defaultMatrix is not null, then we already have a default value.
-			matrix = defaultMatrix.matrix;
+			Entity target = (Entity)obj;
+			DefenceMatrix defaultMatrix = Getter.getDefencePercentFromEntity(target);
+			if(defaultMatrix != null)
+			{
+				// if defaultMatrix is not null, then we already have a default value.
+				matrix = defaultMatrix.matrix;
+			}
+			else
+			{
+				// if defaultMatrix is null, we don't have any default value... So we initialize it.
+				super.updateEntity(target, this.getClass());
+					
+			}// end of else no default value
 		}
-		else
-		{
-			// if defaultMatrix is null, we don't have any default value... So we initialize it.
-			super.updateEntity(target, this.getClass());
-				
-		}// end of else no default value
+
 	} // end of auto update	
 
 }

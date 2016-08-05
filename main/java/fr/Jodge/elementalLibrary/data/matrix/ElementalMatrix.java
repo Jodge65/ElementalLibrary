@@ -15,7 +15,6 @@ import com.google.gson.JsonObject;
 
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import scala.Int;
 import scala.actors.threadpool.Arrays;
@@ -281,7 +280,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 		
 		if(!atLeastOne)
 		{
-			matrix.put(Element.addOrGet("normal"), 1.0F);
+			matrix.put(Element.findById(0), 1.0F);
 		}
 	}
 }

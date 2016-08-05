@@ -9,6 +9,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
 import fr.Jodge.elementalLibrary.data.element.Element;
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
@@ -32,6 +33,14 @@ public class Getter extends Register
 		return WEAPONS_DAMAGE_BRUTE.getOrDefault(name, null);
 	}
 	
+	public static IElementalWritable get(Class<? extends IElementalWritable> clazz, Class value)
+	{
+		if(VALUE_REGISTER.containsKey(clazz))
+		{
+			return VALUE_REGISTER.get(AttackMatrix.class).getOrDefault(value, null);
+		}
+		return null;
+	}
 	
 	public static AttackMatrix getDamagePercentFromEntity(Entity entity)
 	{
@@ -40,7 +49,7 @@ public class Getter extends Register
 	
 	public static AttackMatrix getDamagePercentFromEntity(Class entityClass)
 	{
-		return ENTITY_DAMAGE_PERCENT.getOrDefault(entityClass, null);
+		return (AttackMatrix) get(AttackMatrix.class, entityClass);
 	}
 	
 	
@@ -51,7 +60,7 @@ public class Getter extends Register
 	
 	public static DefenceMatrix getDefencePercentFromEntity(Class entityClass)
 	{
-		return ENTITY_RESISTANCE_PERCENT.getOrDefault(entityClass, null);
+		return (DefenceMatrix) get(DefenceMatrix.class, entityClass);
 	}
 	
 	public static DataParameter getDataKeyForEntity(Entity target, Class dataType)
@@ -100,8 +109,8 @@ public class Getter extends Register
 		}
 		else
 		{
-			JLog.alert("DamageSources " + source.getDamageType() + " is not references... Normal is used...");
-			returnValue.set(Element.addOrGet("normal"), amount);
+			JLog.alert("DamageSources " + source.getDamageType() + " is not references... Element whit ID 0 is used...");
+			returnValue.set(Element.findById(0), amount);
 		}
 		return returnValue;
 	}

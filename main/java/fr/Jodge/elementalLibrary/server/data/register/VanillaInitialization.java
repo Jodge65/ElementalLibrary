@@ -1,48 +1,22 @@
-package fr.Jodge.elementalLibrary.data.register;
+package fr.Jodge.elementalLibrary.server.data.register;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.*;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionHelper;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
+import fr.Jodge.elementalLibrary.data.register.Register;
 
-/*
- 		fire.setDefaultValue(atk, EntityBlaze.class, 1.0F);
-		fire.setDefaultValue(atk, EntityCaveSpider.class, 1.0F);
-		fire.setDefaultValue(atk, EntityCreeper.class, 1.0F);
-		fire.setDefaultValue(atk, EntityEnderman.class, 1.0F);
-		fire.setDefaultValue(atk, EntityEndermite.class, 1.0F);
-		fire.setDefaultValue(atk, EntityGhast.class, 1.0F);
-		fire.setDefaultValue(atk, EntityGiantZombie.class, 1.0F);
-		fire.setDefaultValue(atk, EntityGolem.class, 1.0F);
-		fire.setDefaultValue(atk, EntityGuardian.class, 1.0F);
-		fire.setDefaultValue(atk, EntityMagmaCube.class, 1.0F);
-		fire.setDefaultValue(atk, EntityPigZombie.class, 1.0F);
-		fire.setDefaultValue(atk, EntityShulker.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySilverfish.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySkeleton.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySlime.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySnowman.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySpider.class, 1.0F);
-		fire.setDefaultValue(atk, EntityWitch.class, 1.0F);
-		fire.setDefaultValue(atk, EntityZombie.class, 1.0F);
-		
-		fire.setDefaultValue(atk, EntityBat.class, 1.0F);
-		fire.setDefaultValue(atk, EntityChicken.class, 1.0F);
-		fire.setDefaultValue(atk, EntityCow.class, 1.0F);
-		fire.setDefaultValue(atk, EntityHorse.class, 1.0F);
-		fire.setDefaultValue(atk, EntityMooshroom.class, 1.0F);
-		fire.setDefaultValue(atk, EntityOcelot.class, 1.0F);
-		fire.setDefaultValue(atk, EntityPig.class, 1.0F);
-		fire.setDefaultValue(atk, EntityRabbit.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySheep.class, 1.0F);
-		fire.setDefaultValue(atk, EntitySquid.class, 1.0F);
-		fire.setDefaultValue(atk, EntityVillager.class, 1.0F);
-		fire.setDefaultValue(atk, EntityWolf.class, 1.0F);
- */
+@SideOnly(Side.SERVER)
 public class VanillaInitialization 
 {
 	/**
@@ -56,22 +30,23 @@ public class VanillaInitialization
 		Class def = DefenceMatrix.class;
 		
 		/** default element */
+		// new PotionEffect(MobEffects.SPEED, 5, 1)
+		// <=> PotionEffect(Potion, Duration, Power)
 		Element normal = Element.addOrGet("normal");
-		Element fire = Element.addOrGet("fire");
-		Element water = Element.addOrGet("water");
-		Element wind = Element.addOrGet("wind");
+		Element fire = Element.addOrGet("fire").setFireEffect(0.75F, 2);
+		Element water = Element.addOrGet("water").addOnHealEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 2, 1), 1.0F);
+		Element wind = Element.addOrGet("wind").addOnHealEffect(new PotionEffect(MobEffects.SPEED, 5, 1), 1.0F);
 		Element dirt = Element.addOrGet("dirt");
 		Element wood = Element.addOrGet("wood");
-		Element thunder = Element.addOrGet("thunder");
+		Element thunder = Element.addOrGet("thunder").setFireEffect(0.25F, 2);
 		Element holy = Element.addOrGet("holy");
 		Element dark = Element.addOrGet("dark");
-		Element poison = Element.addOrGet("poison");
-		Element hunger = Element.addOrGet("hunger");
+		Element poison = Element.addOrGet("poison").addOnDamageEffect(new PotionEffect(MobEffects.POISON, 2, 1), 0.75F);
+		Element hunger = Element.addOrGet("hunger").addOnDamageEffect(new PotionEffect(MobEffects.HUNGER, 5, 2), 0.9F).addOnHealEffect(new PotionEffect(MobEffects.SATURATION, 5, 2), 0.9F);
 		
 		// ATK
 		normal.setDefaultValue(atk, EntityShulker.class, 1.0F);
 		normal.setDefaultValue(atk, EntitySilverfish.class, 1.0F);
-		normal.setDefaultValue(atk, EntitySpider.class, 1.0F);
 		normal.setDefaultValue(atk, EntityPig.class, 1.0F);
 		normal.setDefaultValue(atk, EntityRabbit.class, 1.0F);
 		normal.setDefaultValue(atk, EntitySheep.class, 1.0F);
@@ -105,6 +80,7 @@ public class VanillaInitialization
 		dark.setDefaultValue(atk, EntityZombie.class, 1.0F);
 		
 		poison.setDefaultValue(atk, EntityCaveSpider.class, 1.0F);
+		poison.setDefaultValue(atk, EntitySpider.class, 1.0F);
 		poison.setDefaultValue(atk, EntityWither.class, 1.5F);
 		poison.setDefaultValue(atk, EntityWitch.class, 1.0F);
 		poison.setDefaultValue(atk, EntityMooshroom.class, 1.0F);

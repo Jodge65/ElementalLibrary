@@ -8,7 +8,6 @@ import scala.actors.threadpool.Arrays;
 import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.entity.Entity;
@@ -65,13 +64,12 @@ public class DamageMatrix extends ElementalMatrix
 	}
 	
 	@Override
-	public void autoUptdate(Entity target)
-	{
-	}
+	// TODO change for Item or Entity
+	public void autoUptdate(Object obj){}
 		
 	public void autoUpdateDamage(EntityLivingBase entity, float oldValue) 
 	{
-		matrix.put(Element.addOrGet("normal"), getDamageFromEntity(entity, oldValue));
+		matrix.put(Element.findById(0), getDamageFromEntity(entity, oldValue));
 	}
 	
 	public void autoUpdateDamageHand(EntityLivingBase entity, float oldValue) 
@@ -80,7 +78,7 @@ public class DamageMatrix extends ElementalMatrix
 		
 		ElementalMatrix atkMatrix = entity.getDataManager().get(Getter.getDataKeyForEntity(entity, AttackMatrix.class));
 
-		Element bestBonus = Element.addOrGet("normal");
+		Element bestBonus = Element.findById(0);
 		for(Element element : Element.getAllActiveElement())
 		{
 			if(atkMatrix.get(bestBonus) < atkMatrix.get(element))

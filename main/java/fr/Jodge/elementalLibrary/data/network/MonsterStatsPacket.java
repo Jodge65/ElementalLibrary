@@ -6,13 +6,13 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.entity.MonsterStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -51,7 +51,7 @@ public class MonsterStatsPacket implements IMessage
 		int id = buf.readInt();
 		stats = new MonsterStats(id);
 		
-		for(Class<? extends IElementalWritable> clazz : ElementalConstante.MONSTER_STATS)
+		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
 		{
 			// we create an new object base. Function on createByString is suppose to made a new object !
 			IElementalWritable object;
@@ -77,7 +77,7 @@ public class MonsterStatsPacket implements IMessage
 		buf.writeInt(stats.id);
 
 		// ElementalConstante.PLAYER_STATS is suppose to have every IElementalWritable that can be write in buffer
-		for(Class<? extends IElementalWritable> clazz : ElementalConstante.MONSTER_STATS)
+		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
 		{	
 			IElementalWritable obj = stats.get(clazz);
 			obj.toByte(buf);
@@ -101,7 +101,7 @@ public class MonsterStatsPacket implements IMessage
 			{
 				if(entity instanceof EntityLivingBase)
 				{
-					ElementalConstante.DEFAULT_STATS.put(entity.getClass(), message.stats);
+					Main.constante.DEFAULT_STATS.put(entity.getClass(), message.stats);
 					DataHelper.initEntityMatrix((EntityLivingBase)entity, message.stats);
 				}
 

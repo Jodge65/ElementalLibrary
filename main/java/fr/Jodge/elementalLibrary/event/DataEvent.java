@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -16,13 +17,17 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.MonsterHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
+import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataEvent
@@ -80,13 +85,23 @@ public class DataEvent
 	
 	public void onInteract (EntityInteractSpecific event)
 	{
-		
+		// TODO add NameTag compatibility
 	}
 	
 	@SubscribeEvent
 	public void onClientDisconnectionFromServer(ClientDisconnectionFromServerEvent event) 
 	{
         // purge constant
-    	ElementalConstante.onClientExit();
+		Main.constante.onClientExit();
+	}
+	
+	@SubscribeEvent
+	public void onClientConnectToServer(ServerConnectionFromClientEvent event)
+	{
+		JLog.info("Client Connecting");
+		Packet packetIn = Main.constante.STATS_SOCKET.getPacketFrom(new InitElementPacket());
+		event.getManager().sendPacket(packetIn);
+		// give data (SERVER SIDE)
+		Main.constante.onClientJoin();
 	}
 }

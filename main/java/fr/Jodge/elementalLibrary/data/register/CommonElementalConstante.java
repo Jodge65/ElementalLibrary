@@ -20,9 +20,11 @@ import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
+import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
 import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
 import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,13 +33,18 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class ElementalConstante extends Variable
+/**
+ * Common class for Constante
+ * @author Jodge
+ *
+ */
+public class CommonElementalConstante extends Variable
 {
 	/**
 	 * What you need to do : 
 	 * - Refers each kind of existing stats
 	 */
-	public static void onPreLoad()
+	public void onPreLoad()
 	{
 		JLog.info(" --- PREINIT --- ");
 		
@@ -47,6 +54,7 @@ public class ElementalConstante extends Variable
 		STATS_SOCKET.registerMessage(PlayerStatsPacket.Handler.class, PlayerStatsPacket.class, 1, Side.CLIENT);
 		STATS_SOCKET.registerMessage(AskMonsterStatsPacket.Handler.class, AskMonsterStatsPacket.class, 2, Side.SERVER);
 		STATS_SOCKET.registerMessage(MonsterStatsPacket.Handler.class, MonsterStatsPacket.class, 3, Side.CLIENT);
+		STATS_SOCKET.registerMessage(InitElementPacket.Handler.class, InitElementPacket.class, 4, Side.CLIENT);
 		JLog.info("New socket have been create for STATS_SOCKET");
 
 		/** list of value that exist for player, and default value*/
@@ -72,11 +80,8 @@ public class ElementalConstante extends Variable
 		WEAPONS_DAMAGE_BRUTE = new HashMap<String, DamageMatrix>();
 		JLog.info("New map have been create for WEAPONS_DAMAGE_BRUTE");
 
-		ENTITY_DAMAGE_PERCENT = new HashMap<Class, AttackMatrix>();
-		JLog.info("New map have been create for ENTITY_DAMAGE_PERCENT");
-
-		ENTITY_RESISTANCE_PERCENT = new HashMap<Class, DefenceMatrix>();
-		JLog.info("New map have been create for ENTITY_RESISTANCE_PERCENT");
+		VALUE_REGISTER = new HashMap<Class, Map<Class, IElementalWritable>>();
+		JLog.info("New map have been create for VALUE_REGISTER");
 
 		DEFAULT_ELEMENT_DAMAGE_SOURCES = new HashMap<String, Element>();
 		JLog.info("New map have been create for DEFAULT_ELEMENT_DAMAGE_SOURCES");
@@ -85,35 +90,30 @@ public class ElementalConstante extends Variable
 	
 	/**
 	 * What you need to do : 
-	 * - add/remove element
+	 * 
 	 */
-	public static void onLoad()
+	public void onLoad()
 	{
 		JLog.info(" --- INIT --- ");
-		
-		VanillaInitialization.initElement();
-		JLog.info("Vanilla generation Initialized.");
 		
 	}
 	
 	/**
+	 * What you need to do : 
 	 * 
 	 */
-	public static void onAfterLoad()
+	public void onAfterLoad()
 	{
 		JLog.info(" --- POSTINIT --- ");
 
 	}	
 	
-	/**
-	 * - Purge Client value that depend on server
-	 */
-	public static void onClientExit() 
-	{
-		JLog.info(" --- START PURGE --- ");
-		DEFAULT_STATS.clear();
-		
-		JLog.info(" --- END PURGE --- ");
+	// nothing common
+	public void onClientJoin(){}
+	
+	// nothing common
+	public void onClientExit() {}
 
-	}
+	// nothing common
+	public void onServerStart(){}
 }

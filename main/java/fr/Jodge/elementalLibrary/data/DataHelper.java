@@ -12,10 +12,8 @@ import net.minecraft.network.datasync.EntityDataManager.DataEntry;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.function.JLog;
-
 
 public class DataHelper 
 {

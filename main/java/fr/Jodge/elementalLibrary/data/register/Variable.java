@@ -17,7 +17,6 @@ import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 
 public class Variable 
 {
-
 	/** Map of each kind of existing stats */
 	public static Map<Class, Map<Class, DataParameter>> STATS;
 	
@@ -35,6 +34,7 @@ public class Variable
 	public static Map<String, Element> DEFAULT_ELEMENT_DAMAGE_SOURCES;
 	
 	public static Map<String, DamageMatrix> WEAPONS_DAMAGE_BRUTE;
-	public static Map<Class, AttackMatrix> ENTITY_DAMAGE_PERCENT;
-	public static Map<Class, DefenceMatrix> ENTITY_RESISTANCE_PERCENT;
+	public static Map<Class, Map<Class, IElementalWritable>> VALUE_REGISTER;
+	//public static Map<Class, AttackMatrix> ENTITY_DAMAGE_PERCENT;
+	//public static Map<Class, DefenceMatrix> ENTITY_RESISTANCE_PERCENT;
 }

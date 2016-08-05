@@ -21,7 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class PlayerStats extends AbstractStats
@@ -32,7 +32,7 @@ public class PlayerStats extends AbstractStats
 	
 	public PlayerStats(UUID uuid) 
 	{
-		super(ElementalConstante.PLAYER_STATS);
+		super(Main.constante.PLAYER_STATS);
 		this.uuid = uuid;
 	}
 	

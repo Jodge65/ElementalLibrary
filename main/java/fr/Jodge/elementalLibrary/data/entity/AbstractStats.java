@@ -32,7 +32,6 @@ import com.google.gson.JsonParser;
 
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public abstract class AbstractStats

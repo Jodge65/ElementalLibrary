@@ -6,13 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.entity.MonsterStats;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +22,7 @@ public class MonsterHelper extends DataHelper
 {
 	public static void initMonster(EntityLivingBase target) 
 	{	
-		if(target.hasCustomName() || !ElementalConstante.DEFAULT_STATS.containsKey(target.getClass()))
+		if(target.hasCustomName() || !Main.constante.DEFAULT_STATS.containsKey(target.getClass()))
 		{
 			if(!target.worldObj.isRemote) // server side
 			{			
@@ -31,12 +31,12 @@ public class MonsterHelper extends DataHelper
 			}
 			else // client side
 			{
-				ElementalConstante.STATS_SOCKET.sendToServer(new AskMonsterStatsPacket(target.getEntityId()));
+				Main.constante.STATS_SOCKET.sendToServer(new AskMonsterStatsPacket(target.getEntityId()));
 			}
 		}
 		else
 		{
-			AbstractStats stats = ElementalConstante.DEFAULT_STATS.get(target.getClass());
+			AbstractStats stats = Main.constante.DEFAULT_STATS.get(target.getClass());
 			DataHelper.initEntityMatrix(target, stats);
 		}
 	}

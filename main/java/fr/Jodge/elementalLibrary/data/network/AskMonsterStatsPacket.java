@@ -3,7 +3,6 @@ package fr.Jodge.elementalLibrary.data.network;
 import java.util.UUID;
 
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.register.ElementalConstante;
 import fr.Jodge.elementalLibrary.function.JLog;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
