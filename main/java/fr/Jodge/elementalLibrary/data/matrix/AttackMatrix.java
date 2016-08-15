@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -72,7 +73,11 @@ public class AttackMatrix extends ElementalMatrix
 			if(defaultMatrix != null)
 			{
 				// if defaultMatrix is not null, then we already have a default value.
-				matrix = defaultMatrix.matrix;
+
+				if(isCorrectMatrix(defaultMatrix.matrix))
+					matrix = defaultMatrix.matrix;
+				else
+					JLog.error("Their are something wrong whit element use in this matrix...");
 			}
 			else
 			{

@@ -20,6 +20,7 @@ import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
+import fr.Jodge.elementalLibrary.data.network.InitDamageSourcePacket;
 import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
 import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
@@ -30,6 +31,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,6 +58,7 @@ public class CommonElementalConstante extends Variable
 		STATS_SOCKET.registerMessage(AskMonsterStatsPacket.Handler.class, AskMonsterStatsPacket.class, 2, Side.SERVER);
 		STATS_SOCKET.registerMessage(MonsterStatsPacket.Handler.class, MonsterStatsPacket.class, 3, Side.CLIENT);
 		STATS_SOCKET.registerMessage(InitElementPacket.Handler.class, InitElementPacket.class, 4, Side.CLIENT);
+		STATS_SOCKET.registerMessage(InitDamageSourcePacket.Handler.class, InitDamageSourcePacket.class, 5, Side.CLIENT);
 		JLog.info("New socket have been create for STATS_SOCKET");
 
 		/** list of value that exist for player, and default value*/
@@ -114,8 +117,9 @@ public class CommonElementalConstante extends Variable
 
 	/**
 	 * What you need to do : 
+	 * @param server 
 	 * 
-	 */	public void onServerStart()
+	 */	public void onServerStart(MinecraftServer server)
 	{
 		// WARNING : integrated server work whit proxy on ClienSide.
 		JLog.info(" --- SERVER START --- ");

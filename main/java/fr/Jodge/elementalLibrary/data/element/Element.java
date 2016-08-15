@@ -33,6 +33,7 @@ public class Element implements IElementalWritable
 {
 	protected static Map<String, Element> LIST_OF_ACTIVE_ELEMENT = new HashMap<String, Element>();
 	protected static Map<String, Element> LIST_OF_UNACTIVE_ELEMENT = new HashMap<String, Element>();
+	protected static Map<String, Element> LIST_OF_ELEMENT = new HashMap<String, Element>();
 	protected static Map<Integer, String> REF_INT_STRING = new HashMap<Integer, String>();
 	private static int currentKey = 0;
 	
@@ -70,6 +71,7 @@ public class Element implements IElementalWritable
 		this.name = name;
 		this.isActive = isActive;
 		this.LIST_OF_ACTIVE_ELEMENT.put(name, this);
+		this.LIST_OF_ELEMENT.put(name, this);
 		this.REF_INT_STRING.put(this.id, this.name);
 		
 		this.defaultValue = new HashMap<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>>();
@@ -199,7 +201,7 @@ public class Element implements IElementalWritable
 	@Override
 	public String toString()
 	{
-		return this.id + ":" + this.name + "(" + this.isActive + ")";
+		return "@" + this.hashCode() + "-" + this.id + ":" + this.name + "(" + this.isActive + ")";
 	}
 	/**
 	 * 
@@ -241,6 +243,7 @@ public class Element implements IElementalWritable
 	
 
 	@Override
+	/** not functional */
 	public void fromJsonObject(JsonObject j) 
 	{
 		this.isActive = j.get("isActive").getAsBoolean();
@@ -248,6 +251,7 @@ public class Element implements IElementalWritable
 	}
 
 	@Override
+	/** not functional */
 	public JsonObject toJsonObject() 
 	{
 		JsonObject j = new JsonObject();
@@ -302,6 +306,7 @@ public class Element implements IElementalWritable
 			PotionEffect potion = PotionEffect.readCustomPotionEffectFromNBT(tag);
 			float probability = buf.readFloat();
 			addOnHealEffect(potion, probability);
+			
 		}
 	}
 
@@ -340,7 +345,7 @@ public class Element implements IElementalWritable
 		else
 			return null;
 	}
-		
+	
 	/**
 	 * Remove element if exist. If not, he will be generate as inactive.
 	 * @param name <i>String</i> Name of Element
@@ -389,9 +394,7 @@ public class Element implements IElementalWritable
 	
 	public static Collection<Element> getAllElement()
 	{
-		Collection<Element> returnCollection = new ArrayList(LIST_OF_UNACTIVE_ELEMENT.values());
-		returnCollection.addAll(getAllActiveElement());
-		return returnCollection;
+		return LIST_OF_ELEMENT.values();
 	}
 	
 	public static Collection<Element> getAllActiveElement()
@@ -399,11 +402,30 @@ public class Element implements IElementalWritable
 		return LIST_OF_ACTIVE_ELEMENT.values();
 	}
 
-	public static void clear()
+	public static Collection<Element> getAllUnActiveElement()
+	{
+		return LIST_OF_UNACTIVE_ELEMENT.values();
+	}
+	
+	public static void reset()
 	{
 		LIST_OF_ACTIVE_ELEMENT.clear();
 		LIST_OF_UNACTIVE_ELEMENT.clear();
+		LIST_OF_ELEMENT.clear();
 		REF_INT_STRING.clear();
+		
+		currentKey = 0;
+	}
+
+	/**
+	 * check if element is one of the unique instance. Never used wrong element !
+	 * 
+	 * @param element <i>Element</i> element to check
+	 * @return <i>boolean</i>
+	 */
+	public static boolean checkElement(Element element) 
+	{
+		return LIST_OF_ELEMENT.containsValue(element);
 	}
 	
 

@@ -72,6 +72,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 	{
 		this(0.0F);
 	}
+	
 	public ElementalMatrix(float base)
 	{
 		this.matrix = new HashMap<Element, Float>();
@@ -80,13 +81,19 @@ public abstract class ElementalMatrix implements IElementalWritable
 
 	public ElementalMatrix(Map<Element, Float> matrix)
 	{
-		this.matrix = new HashMap<Element, Float>(matrix);
-		completeArray();
+		this();
+		for(Element element : Element.getAllElement())
+		{
+			if(!matrix.containsKey(element))
+			{
+				this.matrix.put(element, matrix.get(element));
+			}
+		}
 	}
 
 	/**
 	 * private method that finish to initialize array.
-	 * It's suppose to be call when entity spawn, so if you add element, their will note need to use it
+	 * It's suppose to be call whenever you create a new matrix.
 	 */
 	protected ElementalMatrix completeArray()
 	{
@@ -99,7 +106,9 @@ public abstract class ElementalMatrix implements IElementalWritable
 		for(Element element : Element.getAllElement())
 		{
 			if(!matrix.containsKey(element))
+			{
 				matrix.put(element, defaultValue);
+			}
 		}
 		return this;
 	}
@@ -111,7 +120,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 	
 	/**
 	 * (matrix is supposed already full, so their are not add statement available)
-	 * wrong tentative will not delete 
+	 * wrong tentative will also be add, but their will never be used
 	 * 
 	 * @param index <i>int</i> index you want to change. you can also put and Element instead
 	 * @param value <i>float</i> value that you want to add to this matrix
@@ -128,13 +137,21 @@ public abstract class ElementalMatrix implements IElementalWritable
 	}
 	
 	
-	public Float get(int index)
+	public float get(int index)
 	{
 		return get(Element.findById(index));
 	}
-	public Float get(Element index)
+	public float get(Element index)
 	{
-		return matrix.getOrDefault(index, null);
+		if(matrix.containsKey(index))
+		{
+			return matrix.get(index);
+		}
+		else
+		{
+			JLog.warning("Element @" + index.hashCode() + ": " + index + " is not references in Matrix : " + this.matrix);
+			return 0.0F;
+		}
 	}
 	
 	@Override
@@ -212,6 +229,17 @@ public abstract class ElementalMatrix implements IElementalWritable
 		}
 	}
 
+	public static boolean isCorrectMatrix(Map<Element, Float> testMatrix)
+	{
+		for(Element element : testMatrix.keySet())
+		{
+			if(!Element.checkElement(element))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 	
 // CONDITION ----------------------------------------------------------------------------------------

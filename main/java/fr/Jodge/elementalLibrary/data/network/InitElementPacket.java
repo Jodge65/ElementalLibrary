@@ -64,7 +64,7 @@ public class InitElementPacket implements IMessage
 		@SideOnly(Side.CLIENT)
 		public IMessage onMessage(InitElementPacket message, MessageContext ctx) 
 		{
-			JLog.info("Well... Packet it's suppose to be receive... I guess...");
+			JLog.info("Elements supposed to be received.");
 			return null;
 		}
 		

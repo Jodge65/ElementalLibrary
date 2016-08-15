@@ -55,19 +55,19 @@ public class DamageHelper
 		
 		DataParameter resistKey = Getter.getDataKeyForEntity(targetEntity, DefenceMatrix.class);
 		DefenceMatrix resistMatrix = targetEntity.getDataManager().get(resistKey);
-		
+
 		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
 		environnementMatrix.autoUptdate(attacker);
 		
 		DamageMatrix damageMatrix;
 		
-		ItemStack itemStack = null;
+		ItemStack itemStack = null; 
 
 		EnumHand hand = attacker.getActiveHand();
 		if(hand != null )
 			itemStack = attacker.getHeldItem(hand);
-					
-		if(itemStack != null)
+		
+		if(itemStack != null) 
 		{
 			Item activeItem = itemStack.getItem();
 			
@@ -84,18 +84,23 @@ public class DamageHelper
 			damageMatrix.autoUpdateDamageHand(attacker, oldValue);
 		}
 	
-		for(Element element : Element.getAllElement() )
+		for(Element element : Element.getAllActiveElement() )
 		{
+			float baseDamage = damageMatrix.get(element);
 			float theoriqueDamage = 0.0F;
-			float damage = damageMatrix.get(element);
-			if(damage != 0.0F)
+			if(baseDamage != 0.0F)
 			{
 				//String currentElementName = Element.getKey(index);
 				float atkMultiplier = atkMatrix.get(element);
+				if(atkMultiplier == 0.0F)
+					JLog.write("TEST : atk = 0... " + element);
 				float resDivider = resistMatrix.get(element);
+				if(resDivider == 0.0F)
+					JLog.write("TEST : def = 0... " + element);
 				float enviMultiplier = environnementMatrix.get(element);
+				if(enviMultiplier == 0.0F)
 				
-				theoriqueDamage = damage * atkMultiplier * resDivider * enviMultiplier;
+				theoriqueDamage = baseDamage * atkMultiplier * resDivider * enviMultiplier;
 			}
 			damageByElement.put(element, theoriqueDamage);
 		}

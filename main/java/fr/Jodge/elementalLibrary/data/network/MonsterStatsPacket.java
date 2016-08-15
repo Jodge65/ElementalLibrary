@@ -37,12 +37,8 @@ public class MonsterStatsPacket implements IMessage
 
 	public MonsterStatsPacket(EntityLivingBase entity)
 	{
+		JLog.info("New request for monster data : " + entity.getName());
 		this.stats = new MonsterStats(entity);
-	}
-	
-	public MonsterStatsPacket(MonsterStats stats)
-	{
-		this.stats = stats;
 	}
 	
 	@Override
@@ -50,6 +46,7 @@ public class MonsterStatsPacket implements IMessage
 	{
 		int id = buf.readInt();
 		stats = new MonsterStats(id);
+		//stats.entity = (EntityLivingBase) Minecraft.getMinecraft().theWorld.getEntityByID(id);
 		
 		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
 		{
@@ -79,7 +76,7 @@ public class MonsterStatsPacket implements IMessage
 		// ElementalConstante.PLAYER_STATS is suppose to have every IElementalWritable that can be write in buffer
 		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
 		{	
-			IElementalWritable obj = stats.get(clazz);
+			IElementalWritable obj = stats.getStat(clazz);
 			obj.toByte(buf);
 		}
 

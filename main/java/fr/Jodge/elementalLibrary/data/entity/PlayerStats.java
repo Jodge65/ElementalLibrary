@@ -39,6 +39,7 @@ public class PlayerStats extends AbstractStats
 	public PlayerStats(EntityPlayer target) 
 	{
 		this(target.getUniqueID());
+		this.entity = target;
 		MinecraftServer server = target.getServer();
 		String url = folder + target.getUniqueID() + ElementalConfiguration.EXTENTION;
 		data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);

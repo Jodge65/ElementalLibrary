@@ -8,6 +8,7 @@ import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.register.Getter;
 
 public class JLog
 {
@@ -72,7 +73,8 @@ public class JLog
 	public static void crashReport(Throwable throwable, String text)
 	{
 	     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "ElementalLibrary issue !\n" + text);
-         CrashReportCategory crashreportcategory = crashreport.makeCategory("ElementalLibrary issues");
+         //CrashReportCategory crashreportcategory = crashreport.makeCategory("ElementalLibrary issues");
+         
          throw new ReportedException(crashreport);
 	}
 	
@@ -80,6 +82,7 @@ public class JLog
 	{
 		if(entity == null)
 			return "Empty Entity.";
+		
 		String msg = "" 
 				+	entity.getName() + " (" + entity.getClass() + ")\n"
 				+	"List of Matrix : \n"
@@ -87,6 +90,7 @@ public class JLog
 		
 		for(ElementalMatrix matrix : DataHelper.getElementalMatrix(entity))
 		{
+			msg += "Matrix : " + matrix.getClass() + ", whit key id : " + Getter.getDataKeyForEntity(entity, matrix.getClass()).getId() + " :\n";
 			msg += matrix.toString() + "\n";
 		}
 		

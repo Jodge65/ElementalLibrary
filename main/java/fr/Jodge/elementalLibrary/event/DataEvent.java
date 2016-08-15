@@ -7,7 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -28,8 +32,10 @@ import fr.Jodge.elementalLibrary.data.MonsterHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.network.InitDamageSourcePacket;
 import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
+import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataEvent
@@ -54,24 +60,7 @@ public class DataEvent
 			// monster data was store server side. Whit this, it's possible to personalize data for each map !
 			MonsterHelper.initMonster((EntityLivingBase)target);
 		}
-	}
-	
-    public void onServerStopping(FMLServerStoppingEvent event) 
-	{
-        if(FMLCommonHandler.instance().getSide() == Side.SERVER) // Server only 
-        {
-            // save everything
-        	for (PlayerHelper helper : PlayerHelper.allPlayer.values()) 
-        	{
-        	    if(!helper.save())
-        	    {
-        	    	JLog.alert("Current Helper for " + helper.player.getName() + " has trouble and can't be save...");
-        	    }
-        	}
-        	// not needed on server only cause game was close after, but needed on integrated server.
-        	PlayerHelper.allPlayer.clear();
-        }
-    }
+	}	
 	
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerLogout(PlayerLoggedOutEvent event)
@@ -85,8 +74,21 @@ public class DataEvent
 		}
 	}
 	
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onInteract (EntityInteractSpecific event)
 	{
+		ItemStack itemStack = event.getItemStack();
+		if(itemStack != null)
+		{
+			if(itemStack.getItem() == Items.NAME_TAG)
+			{
+				Entity entity = event.getTarget();
+				if(entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer))
+				{			
+					MonsterHelper.initMonster((EntityLivingBase) entity);
+				}
+			}
+		}
 		// TODO add NameTag compatibility
 	}
 	
@@ -102,7 +104,10 @@ public class DataEvent
 	{
 		// Send data SERVER SIDE
 		JLog.info("Client Connecting");
-		Packet packetIn = Main.constante.STATS_SOCKET.getPacketFrom(new InitElementPacket());
-		event.getManager().sendPacket(packetIn);
+		Packet packetElement = Main.constante.STATS_SOCKET.getPacketFrom(new InitElementPacket());
+		Packet packetDamageSource = Main.constante.STATS_SOCKET.getPacketFrom(new InitDamageSourcePacket());
+		event.getManager().sendPacket(packetElement);
+		event.getManager().sendPacket(packetDamageSource);
+
 	}
 }

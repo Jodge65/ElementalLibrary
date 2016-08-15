@@ -40,10 +40,14 @@ public class DataHelper
 			}
 		}
 		if(isNotExisting)
+		{
 			targetData.register(key, element);
+		}
 		else
-			JLog.alert("Entity " + target.getName() + " already have a class " + element.getClass() + " saved. Only one instance can be put in the same time.");;
-		
+		{
+			targetData.set(key, element);
+			JLog.alert("Entity " + target.getName() + " already have a class " + element.getClass() + " saved. Only one instance can be put in the same time, so it was overwriten.");;
+		}
 		return key;
 	}
 	
@@ -66,7 +70,7 @@ public class DataHelper
 	 * @param stats <i>AbstractStats</i> Instance of AbstractStats (use to send/receive value to/from server)
 	 */
 	public static void initEntityMatrix(EntityLivingBase target, AbstractStats stats)
-	{
+	{	
 		for(Class<? extends IElementalWritable> clazz : stats.listOfAvailableStats)
 		{
 			addEntityElement(target, stats.getStat(clazz));

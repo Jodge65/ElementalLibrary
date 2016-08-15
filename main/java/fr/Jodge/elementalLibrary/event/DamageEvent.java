@@ -67,10 +67,6 @@ public class DamageEvent
             	
             	JLog.crashReport(throwable, text);
             }
-			
-			// if is null then we have a basic source of damage
-			//JLog.write("### SOURCE SANS ENTITE : " + source.getDamageType()); 
-			// TODO Damage Source external (lava, thunder...)
 		}
 		else
 		{

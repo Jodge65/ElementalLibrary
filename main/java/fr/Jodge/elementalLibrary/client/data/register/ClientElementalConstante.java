@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.data.element.Element;
@@ -63,12 +64,14 @@ public class ClientElementalConstante extends CommonElementalConstante
 	 * purge old data
 	 */
 	@Override
-	public void onClientExit() 
+	public void onClientExit()
 	{
 		JLog.info(" --- START PURGE --- ");
 		DEFAULT_STATS.clear();
-		Element.clear();
-		
+		JLog.info("Default stats clear.");
+		Element.reset();
+		JLog.info("Element clear.");
+
 		JLog.info(" --- END PURGE --- ");
 	}
 	
@@ -77,9 +80,9 @@ public class ClientElementalConstante extends CommonElementalConstante
 	 * Nothing special to do on client side, but needed for integrated server...
 	 */
 	@Override
-	public void onServerStart()
+	public void onServerStart(MinecraftServer server)
 	{
-		super.onServerStart();
+		super.onServerStart(server);
 	}
 	
 }

@@ -61,23 +61,31 @@ public abstract class AbstractStats
 	{
 		if(data != null)
 		{
-			if(!data.exists())
+			if(entity != null)
 			{
-				// if file not exist, then create new player
-				CreateNew();
-			}
+				if(!data.exists())
+				{
+					// if file not exist, then create new player
+					CreateNew();
+					JLog.info("Default File not already exist for entity " + entity.getClass() + ". It will be generated.");
+				}
 
-			// when file exist : read it !
-			ReadFromFile();
-			if(succes)
-			{
-				JLog.info("Succefuly load data from " + data.getAbsolutePath());
+				// when file exist : read it !
+				ReadFromFile();
+				if(succes)
+				{
+					JLog.info("Succefuly load data from " + data.getAbsolutePath());
+				}
+				else
+				{
+					Log.warn("Something wrong happen whit file " + data.getAbsolutePath() + ". Data will be reset.");
+					succes = true;
+					CreateNew();
+				}
 			}
 			else
 			{
-				Log.warn("Something wrong happen whit file " + data.getAbsolutePath() + ". Data will be reset.");
-				succes = true;
-				CreateNew();
+				JLog.error("Try to make monster stats by file for null entity...");
 			}
 		}
 		else
@@ -98,6 +106,7 @@ public abstract class AbstractStats
 			try 
 			{
 				IElementalWritable objet = clazz.newInstance();
+				objet.autoUptdate(entity);
 				value.put(clazz, objet);
 			}  
 			catch (Exception e) 
@@ -107,7 +116,10 @@ public abstract class AbstractStats
 		}
 		
 		if(doINeedSave)
+		{
+			JLog.info("New Stats for entity " + entity.getClass() + " was save because doIneedSave is true.");
 			save();
+		}
 		
 		return true;
 
@@ -202,6 +214,7 @@ public abstract class AbstractStats
 						{
 							writeStream.flush();
 							writeStream.close();
+							JLog.info("File " + data.getName() + " is now save for entity " + entity.getClass());
 						} 
 						catch (IOException e) 
 						{

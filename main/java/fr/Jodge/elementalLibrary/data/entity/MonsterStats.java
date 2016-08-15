@@ -37,8 +37,6 @@ public class MonsterStats extends AbstractStats
 	
 	public int id;
 
-	public EntityLivingBase entity;
-
 	public MonsterStats(int id)
 	{
 		super(Main.constante.MONSTER_STATS);
@@ -50,53 +48,37 @@ public class MonsterStats extends AbstractStats
 		this(target.getEntityId());
 		this.entity = target;
 		
-		MinecraftServer server = target.getServer();
-		String subFolder = target.getClass().getSimpleName() + "\\";
+		MinecraftServer server = this.entity.getServer();
+		String subFolder = 	this.entity.getClass().getSimpleName() + "\\";
 		String url = folder + subFolder;
 		data = null;
 
 		// check if entity has custom name tag
-		if(target.hasCustomName())
+		if(this.entity.hasCustomName())
 		{
-			// if yes, then we try whi custom name
-			url += target.getCustomNameTag() + ElementalConfiguration.EXTENTION;
+			// if yes, then we try whit custom name
+			url += this.entity.getCustomNameTag() + ElementalConfiguration.EXTENTION;
 			data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 			
 			if(!data.exists())
 			{
+				JLog.info("Custom File " + data.getAbsolutePath() + " not exist. Defautl file will be used");
 				data = null;
+			}
+			else
+			{
+				JLog.info("Custom File " + data.getAbsolutePath() + " exist. It will be used.");
 			}
 		}
 		
 		
 		if(data == null)
 		{
-			url += "default" + ElementalConfiguration.EXTENTION;
+			url = folder + subFolder + "default" + ElementalConfiguration.EXTENTION;
 			data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 		}
 
-		
+		JLog.info("Make monster Stats for " + entity.getClass() + " by file.");
 		makeByFile();
-	}
-	
-	/**
-	 * Try to use all default constructor available in listOfAvailableStats
-	 * @param data <i>File</i>
-	 */
-	@Override
-	protected boolean CreateNew() 
-	{
-		if(super.CreateNew(false))
-		{
-			for(IElementalWritable objet : value.values())
-			{
-				objet.autoUptdate(entity);
-			}
-
-			save();
-			return true;
-		}
-
-		return false;
 	}
 }

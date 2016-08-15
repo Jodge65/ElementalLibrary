@@ -51,7 +51,7 @@ public class DamageMatrix extends ElementalMatrix
 
 	public DamageMatrix()
 	{
-		this(1.0F);
+		this(0.0F);
 	}
 	public DamageMatrix(float base)
 	{
@@ -69,7 +69,8 @@ public class DamageMatrix extends ElementalMatrix
 		
 	public void autoUpdateDamage(EntityLivingBase entity, float oldValue) 
 	{
-		matrix.put(Element.findById(0), getDamageFromEntity(entity, oldValue));
+		Element normal = Element.findById(0);
+		matrix.put(normal, getDamageFromEntity(entity, oldValue));
 	}
 	
 	public void autoUpdateDamageHand(EntityLivingBase entity, float oldValue) 
@@ -79,11 +80,13 @@ public class DamageMatrix extends ElementalMatrix
 		ElementalMatrix atkMatrix = entity.getDataManager().get(Getter.getDataKeyForEntity(entity, AttackMatrix.class));
 
 		Element bestBonus = Element.findById(0);
+
 		for(Element element : Element.getAllActiveElement())
 		{
 			if(atkMatrix.get(bestBonus) < atkMatrix.get(element))
 				bestBonus = element;
 		}
+
 		matrix.put(bestBonus, baseDamage);
 
 	}

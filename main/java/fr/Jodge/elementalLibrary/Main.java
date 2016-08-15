@@ -1,6 +1,8 @@
 package fr.Jodge.elementalLibrary;
 
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
+import fr.Jodge.elementalLibrary.data.PlayerHelper;
+import fr.Jodge.elementalLibrary.debug.ElementalLibraryDebug;
 import fr.Jodge.elementalLibrary.event.DamageEvent;
 import fr.Jodge.elementalLibrary.event.DataEvent;
 import fr.Jodge.elementalLibrary.function.JLog;
@@ -10,6 +12,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -20,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -110,11 +114,29 @@ public class Main
 	}
 
 	@Mod.EventHandler
-	public void onServerStart(FMLServerStartingEvent event)
+    public void onServerStopping(FMLServerStoppingEvent event) 
 	{
-		constante.onServerStart();
+        if(event.getSide() == Side.SERVER) // Server only 
+        {
+            // save everything
+        	for (PlayerHelper helper : PlayerHelper.allPlayer.values()) 
+        	{
+        	    if(!helper.save())
+        	    {
+        	    	JLog.alert("Current Helper for " + helper.player.getName() + " has trouble and can't be save...");
+        	    }
+        	}
+        	// not needed on server only cause game was close after, but needed on integrated server.
+        	PlayerHelper.allPlayer.clear();
+        }
+    }
+    
+	@Mod.EventHandler
+	public void onServerStart(FMLServerAboutToStartEvent event)
+	{
+		Main.constante.onServerStart(event.getServer());
 	}
-	
+
 	protected static String getAuthorMinecraftName()
 	{
 		return "Jodge65";
