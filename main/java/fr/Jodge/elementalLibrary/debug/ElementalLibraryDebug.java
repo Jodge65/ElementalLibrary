@@ -40,6 +40,9 @@ import java.awt.Component;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+
 import java.awt.Panel;
 
 public class ElementalLibraryDebug extends JFrame
@@ -52,12 +55,14 @@ public class ElementalLibraryDebug extends JFrame
 	
 	public static Thread elementUpdate;
 
-	public static JTextArea log, caseElementID, caseElementName, caseElementActive;
-	public static JScrollPane logScroll;
+	public static JTextArea log, caseElementID, caseElementName, caseElementActive, entityData, playerData;
+	public static JScrollPane logScroll, entityScroll, playerScroll;
 	public static JButton elementForceUpdate;
-	public static JPanel centerPanel, elementPanel;
-	public static JSplitPane caseOneAndTwo, allTab;
+	public static JPanel elementPanel;
+	public static JSplitPane caseOneAndTwo, allTab, entitySplit;
 
+	protected static EntityLivingBase entity, player;
+	
 	public ElementalLibraryDebug()
 	{
 		super("ElementalLibrary Debug");
@@ -74,11 +79,9 @@ public class ElementalLibraryDebug extends JFrame
 		elementPanel = new JPanel();
 		elementPanel.setLayout(new BorderLayout());
 		
-		elementForceUpdate = new JButton("Update");
+		elementForceUpdate = new JButton("Force Update");
 		elementForceUpdate.addActionListener(new ElementForceUpdate());
 
-		centerPanel = new JPanel();
-		
 		caseElementID = new JTextArea();
 		caseElementID.setEditable(false);
 
@@ -88,11 +91,23 @@ public class ElementalLibraryDebug extends JFrame
 		caseElementActive = new JTextArea();
 		caseElementActive.setEditable(false);
 
+		playerData = new JTextArea();
+		playerData.setEditable(false);
+		playerScroll = new JScrollPane(playerData, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		playerScroll.setPreferredSize(new Dimension((1200 - (75*3)) / 2, 400));
+		
+		entityData = new JTextArea();
+		entityData.setEditable(false);
+		entityScroll = new JScrollPane(entityData, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		entityScroll.setPreferredSize(new Dimension((1200 - (75*3)) / 2, 400));
+		
 		caseOneAndTwo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, caseElementID, caseElementName);
 		allTab = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, caseOneAndTwo, caseElementActive);
 		allTab.setPreferredSize(new Dimension(75*3, 600));
 
-		getContentPane().add(centerPanel, BorderLayout.CENTER);
+		entitySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, playerScroll, entityScroll);
+		
+		getContentPane().add(entitySplit, BorderLayout.CENTER);
 		getContentPane().add(logScroll, BorderLayout.SOUTH);
 		getContentPane().add(elementPanel, BorderLayout.EAST);
 		elementPanel.add(allTab, BorderLayout.CENTER);
@@ -195,8 +210,13 @@ public class ElementalLibraryDebug extends JFrame
 		@Override
 		public synchronized void actionPerformed(ActionEvent e)
 		{
-			ElementDebugUptade.update();
+			ElementDebugUptade.updateElement();
 		}
+	}
+
+	public void displayEntity(EntityLivingBase target) 
+	{
+		entity = target;
 	}
 	
 }

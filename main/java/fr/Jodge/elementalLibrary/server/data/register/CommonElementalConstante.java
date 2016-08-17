@@ -113,7 +113,7 @@ public class CommonElementalConstante extends Variable
 	}	
 
 	// nothing common
-	public void onClientExit() {}
+	public void onClientExit(){}
 
 	/**
 	 * What you need to do : 
@@ -125,4 +125,8 @@ public class CommonElementalConstante extends Variable
 		JLog.info(" --- SERVER START --- ");
 		VanillaInitialization.initElement();
 	}
+
+	// nothing common
+	public void registerTexture(Item item){}
+	public void registerTexture(Item item, int metadata){}
 }

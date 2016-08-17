@@ -9,10 +9,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.EntityDataManager.DataEntry;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
+import fr.Jodge.elementalLibrary.data.entity.MonsterStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataHelper 
@@ -71,6 +74,17 @@ public class DataHelper
 	 */
 	public static void initEntityMatrix(EntityLivingBase target, AbstractStats stats)
 	{	
+		if(stats instanceof MonsterStats)
+		{
+			if(((MonsterStats)stats).isDefaultStats)
+			{
+				if(!Main.constante.DEFAULT_STATS.containsKey(target.getClass()))
+				{
+					Register.addNewDefaultEntity(target, stats);
+				}
+			}
+		}
+		
 		for(Class<? extends IElementalWritable> clazz : stats.listOfAvailableStats)
 		{
 			addEntityElement(target, stats.getStat(clazz));

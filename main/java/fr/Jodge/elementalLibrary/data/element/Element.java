@@ -65,27 +65,53 @@ public class Element implements IElementalWritable
 		construct(currentKey, name, true, false);
 	}
 	
-	protected void construct(int id, String name, boolean isActive, boolean canAppliedFire)
+	protected boolean construct(int id, String name, boolean isActive, boolean canAppliedFire)
 	{
-		this.id = id;
-		this.name = name;
-		this.isActive = isActive;
-		this.LIST_OF_ACTIVE_ELEMENT.put(name, this);
-		this.LIST_OF_ELEMENT.put(name, this);
-		this.REF_INT_STRING.put(this.id, this.name);
-		
-		this.defaultValue = new HashMap<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>>();
-		
-		this.onDamageEffect = new HashMap<PotionEffect, Float>();
-		this.onHealEffect = new HashMap<PotionEffect, Float>();
-		
-		for(Class clazz : Variable.STATS.keySet())
+		boolean doItWork = true;
+		if(REF_INT_STRING.containsValue(name))
 		{
-			this.defaultValue.put(clazz, new HashMap<Class<? extends Entity>, Float>());
+			if(REF_INT_STRING.containsKey(id))
+			{
+				if(REF_INT_STRING.get(id).equalsIgnoreCase(name))
+				{
+					JLog.info("Instance of " + name + " is already references. It can happen on integrated server cause of double initialization, so it's not an error.");
+					doItWork = false;
+				}
+				else
+				{
+					JLog.warning("Instance of " + name + " is already references whit an other Id, and id already reference to another element...");
+				}
+			}
+			else
+			{
+				JLog.warning("Instance of " + name + " is already references whit an other Id...");
+			}
 		}
 		
-		// boolean configuration (default)
-		this.canAppliedFire = canAppliedFire;
+		if(doItWork)
+		{
+			this.id = id;
+			this.name = name;
+			this.isActive = isActive;
+			this.LIST_OF_ACTIVE_ELEMENT.put(name, this);
+			this.LIST_OF_ELEMENT.put(name, this);
+			this.REF_INT_STRING.put(this.id, this.name);
+			
+			this.defaultValue = new HashMap<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>>();
+			
+			this.onDamageEffect = new HashMap<PotionEffect, Float>();
+			this.onHealEffect = new HashMap<PotionEffect, Float>();
+			
+			for(Class clazz : Variable.STATS.keySet())
+			{
+				this.defaultValue.put(clazz, new HashMap<Class<? extends Entity>, Float>());
+			}
+			
+			// boolean configuration (default)
+			this.canAppliedFire = canAppliedFire;
+			JLog.info("New Element : " + this);
+		}
+		return doItWork;
 	}
 	
 	public int getId(){return id;}
@@ -285,19 +311,21 @@ public class Element implements IElementalWritable
 	@Override
 	public void fromByte(ByteBuf buf) 
 	{
-		id = buf.readInt();
-		name = BufUtils.readUTF8String(buf);
-		isActive = buf.readBoolean();
-		canAppliedFire = buf.readBoolean();
-		construct(id, name, isActive, canAppliedFire);
+		int id = buf.readInt();
+		String name = BufUtils.readUTF8String(buf);
+		boolean isActive = buf.readBoolean();
+		boolean canAppliedFire = buf.readBoolean();
+		boolean doItWork = construct(id, name, isActive, canAppliedFire);
 		
+		// if construct fail, we continue to clear buf and prevent bug, but don't add any effect
 		int damageSize = buf.readInt();
 		for(int i = 0; i < damageSize; i++)
 		{
 			NBTTagCompound tag = BufUtils.readTag(buf);
 			PotionEffect potion = PotionEffect.readCustomPotionEffectFromNBT(tag);
 			float probability = buf.readFloat();
-			addOnDamageEffect(potion, probability);
+			if(doItWork)
+				addOnDamageEffect(potion, probability);
 		}
 		int heal = buf.readInt();
 		for(int i = 0; i < heal; i++)
@@ -305,8 +333,8 @@ public class Element implements IElementalWritable
 			NBTTagCompound tag = BufUtils.readTag(buf);
 			PotionEffect potion = PotionEffect.readCustomPotionEffectFromNBT(tag);
 			float probability = buf.readFloat();
-			addOnHealEffect(potion, probability);
-			
+			if(doItWork)
+				addOnHealEffect(potion, probability);
 		}
 	}
 

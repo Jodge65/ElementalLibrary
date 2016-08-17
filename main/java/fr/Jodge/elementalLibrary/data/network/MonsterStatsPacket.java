@@ -46,6 +46,7 @@ public class MonsterStatsPacket implements IMessage
 	{
 		int id = buf.readInt();
 		stats = new MonsterStats(id);
+		stats.isDefaultStats = buf.readBoolean();
 		//stats.entity = (EntityLivingBase) Minecraft.getMinecraft().theWorld.getEntityByID(id);
 		
 		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
@@ -72,6 +73,7 @@ public class MonsterStatsPacket implements IMessage
 	public void toBytes(ByteBuf buf) 
 	{
 		buf.writeInt(stats.id);
+		buf.writeBoolean(stats.isDefaultStats);
 
 		// ElementalConstante.PLAYER_STATS is suppose to have every IElementalWritable that can be write in buffer
 		for(Class<? extends IElementalWritable> clazz : Main.constante.MONSTER_STATS)
@@ -98,7 +100,6 @@ public class MonsterStatsPacket implements IMessage
 			{
 				if(entity instanceof EntityLivingBase)
 				{
-					Main.constante.DEFAULT_STATS.put(entity.getClass(), message.stats);
 					DataHelper.initEntityMatrix((EntityLivingBase)entity, message.stats);
 				}
 

@@ -92,14 +92,8 @@ public class DamageHelper
 			{
 				//String currentElementName = Element.getKey(index);
 				float atkMultiplier = atkMatrix.get(element);
-				if(atkMultiplier == 0.0F)
-					JLog.write("TEST : atk = 0... " + element);
 				float resDivider = resistMatrix.get(element);
-				if(resDivider == 0.0F)
-					JLog.write("TEST : def = 0... " + element);
-				float enviMultiplier = environnementMatrix.get(element);
-				if(enviMultiplier == 0.0F)
-				
+				float enviMultiplier = environnementMatrix.get(element);	
 				theoriqueDamage = baseDamage * atkMultiplier * resDivider * enviMultiplier;
 			}
 			damageByElement.put(element, theoriqueDamage);

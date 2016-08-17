@@ -44,7 +44,6 @@ public class InitElementPacket implements IMessage
 		{
 			Element element = new Element();
 			element.fromByte(buf);
-			JLog.info("New Element : " + element);
 		}
 	}
 

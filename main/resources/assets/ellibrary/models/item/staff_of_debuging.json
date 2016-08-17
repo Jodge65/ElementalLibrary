@@ -1,0 +1,18 @@
+{
+    "parent": "builtin/generated",
+    "textures": {
+        "layer0": "elLibrary:items/staff_of_debuging"
+    },
+    "display": {
+        "thirdperson": {
+            "rotation": [ 5, 180, 45 ],
+            "translation": [ 0.1 , 9.5, -1.2 ],
+            "scale": [ 1.7, 1.7, 0.85 ]
+        },
+        "firstperson": {
+            "rotation": [ -100, 75, -80 ],
+            "translation": [ 10, 4, -4 ],
+            "scale": [ 3.0, 3.0, 1.7 ]
+        }
+    }
+}

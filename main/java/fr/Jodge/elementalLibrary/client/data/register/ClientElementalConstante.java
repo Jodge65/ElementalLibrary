@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
@@ -85,4 +89,17 @@ public class ClientElementalConstante extends CommonElementalConstante
 		super.onServerStart(server);
 	}
 	
+	@Override
+	public void registerTexture(Item item)
+	{
+		registerTexture(item, 0);
+	}
+	
+	@Override
+	public void registerTexture(Item item, int metadata)
+	{
+		String name = item.getUnlocalizedName().substring(item.getUnlocalizedName().indexOf(".") + 1);
+		ModelLoader.setCustomModelResourceLocation (item , metadata, new ModelResourceLocation (Main.MODID + ":" + name, "inventory"));
+	}
+
 }

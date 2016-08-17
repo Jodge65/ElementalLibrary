@@ -98,6 +98,12 @@ public class ConfigurationHelper
 						, Pattern.compile("^\\.[a-zA-Z]+")
 		);
 
+		if(event.getSide().isServer() && ElementalConfiguration.WINDOW_DEBUG)
+		{
+			ElementalConfiguration.WINDOW_DEBUG = false;
+			JLog.alert("No Windows Debug Available in Server Mode. WINDOW_DEBUG was set to false to prevent bug.");
+		}
+		
 		return this;
 	}
 	

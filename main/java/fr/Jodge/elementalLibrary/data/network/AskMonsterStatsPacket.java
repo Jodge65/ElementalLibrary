@@ -46,7 +46,7 @@ public class AskMonsterStatsPacket implements IMessage
 			int id = message.idEntity;
 			Entity entity = ctx.getServerHandler().playerEntity.worldObj.getEntityByID(id);
 			
-			// in case player is null, return null. Don't need to answer in this case.
+			// in case entity is null, return null. Don't need to answer in this case.
 			if(entity == null)
 				return null;
 			else

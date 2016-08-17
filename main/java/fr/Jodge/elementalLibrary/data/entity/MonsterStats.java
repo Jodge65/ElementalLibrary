@@ -36,7 +36,8 @@ public class MonsterStats extends AbstractStats
 	public static final String folder = "monsterdata\\";
 	
 	public int id;
-
+	public boolean isDefaultStats;
+	
 	public MonsterStats(int id)
 	{
 		super(Main.constante.MONSTER_STATS);
@@ -47,7 +48,7 @@ public class MonsterStats extends AbstractStats
 	{
 		this(target.getEntityId());
 		this.entity = target;
-		
+
 		MinecraftServer server = this.entity.getServer();
 		String subFolder = 	this.entity.getClass().getSimpleName() + "\\";
 		String url = folder + subFolder;
@@ -68,6 +69,7 @@ public class MonsterStats extends AbstractStats
 			else
 			{
 				JLog.info("Custom File " + data.getAbsolutePath() + " exist. It will be used.");
+				this.isDefaultStats = false;
 			}
 		}
 		
@@ -76,9 +78,11 @@ public class MonsterStats extends AbstractStats
 		{
 			url = folder + subFolder + "default" + ElementalConfiguration.EXTENTION;
 			data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
+			this.isDefaultStats = true;
 		}
 
 		JLog.info("Make monster Stats for " + entity.getClass() + " by file.");
 		makeByFile();
 	}
+	
 }

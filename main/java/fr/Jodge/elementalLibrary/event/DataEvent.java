@@ -8,13 +8,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -75,21 +79,24 @@ public class DataEvent
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOW)
-	public void onInteract (EntityInteractSpecific event)
+	public void onInteract (EntityInteract event)
 	{
 		ItemStack itemStack = event.getItemStack();
 		if(itemStack != null)
 		{
-			if(itemStack.getItem() == Items.NAME_TAG)
+			Item item = itemStack.getItem();
+			if(item == Items.NAME_TAG) // item instanceof ItemNameTag
 			{
 				Entity entity = event.getTarget();
 				if(entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer))
-				{			
+				{
+					((ItemNameTag)item).itemInteractionForEntity(itemStack, event.getEntityPlayer(), (EntityLivingBase)entity, event.getHand());
 					MonsterHelper.initMonster((EntityLivingBase) entity);
+					event.setCanceled(true);
 				}
 			}
 		}
-		// TODO add NameTag compatibility
+		//TODO check... Log say that client side receive value for default...
 	}
 	
 	@SubscribeEvent

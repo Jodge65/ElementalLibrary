@@ -84,7 +84,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 		this();
 		for(Element element : Element.getAllElement())
 		{
-			if(!matrix.containsKey(element))
+			if(matrix.containsKey(element))
 			{
 				this.matrix.put(element, matrix.get(element));
 			}

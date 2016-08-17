@@ -8,6 +8,7 @@ import fr.Jodge.elementalLibrary.event.DataEvent;
 import fr.Jodge.elementalLibrary.function.JLog;
 import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -53,16 +54,22 @@ public class Main
 	@SidedProxy(clientSide = "fr.Jodge.elementalLibrary.client.data.register.ClientElementalConstante", serverSide = "fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante")
 	public static CommonElementalConstante constante;
 	
+	public static Item STAFF_OF_DEBUG;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
-	{
+	{	
 		isTinkerConstructLoaded = Loader.isModLoaded("tconstruct");
 		
 		configFile = ConfigurationHelper.getInstance(event);
 		configFile.onPreInit();
 		
+		// WINDOW_DEBUG is automaticaly set to false on server side to prevent bug.
 		if(ElementalConfiguration.WINDOW_DEBUG)
+		{
 			DEBUG_WINDOWS = new ElementalLibraryDebug();
+		}
+		STAFF_OF_DEBUG = new StaffOfDebuging();
 
 		// Pretty useless but... So beautiful :D... Okay i take the door :(
 		JLog.write("[ ### --- INFO --- ### ]");

@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.DamageSource;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.element.Element;
+import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
@@ -71,7 +74,19 @@ public  class Register extends Variable
 		
 	}
 	
+	/**
+	 * 
+	 * @param clazz <i>Class</i> supposed to be entity.getClass()
+	 * @param stats <i>AbstractStats</i> default stats.
+	 */
+	public static void addNewDefaultEntity(Entity entity, AbstractStats stats)
+	{
+		addNewDefaultEntity(entity.getClass(), stats);
+	}
+	public static void addNewDefaultEntity(Class clazz, AbstractStats stats)
+	{
+		DEFAULT_STATS.put(clazz, stats);
+	}
 
-	
 	
 }
