@@ -34,12 +34,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.MonsterHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
-import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.InitDamageSourcePacket;
 import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataEvent
@@ -96,7 +96,6 @@ public class DataEvent
 				}
 			}
 		}
-		//TODO check... Log say that client side receive value for default...
 	}
 	
 	@SubscribeEvent

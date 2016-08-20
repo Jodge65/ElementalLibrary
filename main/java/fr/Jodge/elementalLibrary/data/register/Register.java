@@ -6,15 +6,19 @@ import java.util.Map;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.DamageSource;
 import fr.Jodge.elementalLibrary.Main;
+import fr.Jodge.elementalLibrary.data.DataHelper;
+import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
+import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
+import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public  class Register extends Variable
@@ -37,9 +41,9 @@ public  class Register extends Variable
 	 * @param item <i>Item</i> 
 	 * @param matrix <i>DamageMatrix</i>
 	 */
-	public static void addNewWeaponMatrix(Item item, DamageMatrix matrix)
+	public static void addNewWeaponMatrix(ItemStack stack, ItemStats stats)
 	{
-		addNewWeaponMatrix(item.getUnlocalizedName(), matrix);
+		addNewWeaponMatrix(ItemHelper.getUnlocalizedName(stack), stats);
 	}
 	
 	/**
@@ -47,10 +51,10 @@ public  class Register extends Variable
 	 * @param name <i>String</i> 
 	 * @param matrix <i>DamageMatrix</i>
 	 */
-	public static void addNewWeaponMatrix(String name, DamageMatrix matrix)
+	public static void addNewWeaponMatrix(String name, ItemStats stats)
 	{
-		if(!WEAPONS_DAMAGE_BRUTE.containsKey(name))
-			WEAPONS_DAMAGE_BRUTE.put(name, matrix);
+		if(!DEFAULT_ITEM_STATS.containsKey(name))
+			DEFAULT_ITEM_STATS.put(name, stats);
 		else
 			JLog.alert("Item " + name + " is already references. ");
 	}
@@ -67,11 +71,6 @@ public  class Register extends Variable
 	public static void addNewElementOnDamageSources(String name, Element element)
 	{
 		DEFAULT_ELEMENT_DAMAGE_SOURCES.put(name, element);
-	}
-	
-	public static void addNewWeaponMatrix(String name, List<Float> rawMatrix)
-	{
-		
 	}
 	
 	/**

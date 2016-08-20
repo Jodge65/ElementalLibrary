@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.data.entity;
+package fr.Jodge.elementalLibrary.data.stats;
 
 import io.netty.buffer.ByteBuf;
 
@@ -40,7 +40,7 @@ public abstract class AbstractStats
 	
 	public List<Class<? extends IElementalWritable>> listOfAvailableStats;
 	
-	public Entity entity;
+	public Object obj;
 	public File data;
 	
 	/** private state that refer to file success (or not) */
@@ -61,13 +61,13 @@ public abstract class AbstractStats
 	{
 		if(data != null)
 		{
-			if(entity != null)
+			if(obj != null)
 			{
 				if(!data.exists())
 				{
 					// if file not exist, then create new player
 					CreateNew();
-					JLog.info("Default File not already exist for entity " + entity.getClass() + ". It will be generated.");
+					JLog.info("Default File not already exist for " + obj.getClass() + ". It will be generated.");
 				}
 
 				// when file exist : read it !
@@ -85,7 +85,7 @@ public abstract class AbstractStats
 			}
 			else
 			{
-				JLog.error("Try to make monster stats by file for null entity...");
+				JLog.error("Try to make monster stats by file for null obj...");
 			}
 		}
 		else
@@ -106,7 +106,7 @@ public abstract class AbstractStats
 			try 
 			{
 				IElementalWritable objet = clazz.newInstance();
-				objet.autoUptdate(entity);
+				objet.autoUptdate(obj);
 				value.put(clazz, objet);
 			}  
 			catch (Exception e) 
@@ -117,7 +117,7 @@ public abstract class AbstractStats
 		
 		if(doINeedSave)
 		{
-			JLog.info("New Stats for entity " + entity.getClass() + " was save because doIneedSave is true.");
+			JLog.info("New Stats for " + obj.getClass() + " was save because doIneedSave is true.");
 			save();
 		}
 		
@@ -214,7 +214,7 @@ public abstract class AbstractStats
 						{
 							writeStream.flush();
 							writeStream.close();
-							JLog.info("File " + data.getName() + " is now save for entity " + entity.getClass());
+							JLog.info("File " + data.getName() + " is now save for  " + obj.getClass());
 						} 
 						catch (IOException e) 
 						{
@@ -223,7 +223,7 @@ public abstract class AbstractStats
 						}
 						if(succes)
 						{
-							JLog.info("Succefuly save data for " + entity + " in file " + data.getName());
+							JLog.info("Succefuly save data for " + obj.getClass() + " in file " + data.getName());
 
 						}
 					}

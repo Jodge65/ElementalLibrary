@@ -40,7 +40,8 @@ public class Element implements IElementalWritable
 	protected int id;
 	protected String name;
 	protected boolean isActive;
-	protected Map<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>> defaultValue;
+	protected Map<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>> defaultClassValue;
+	protected Map<Class<? extends IElementalWritable>, Map<String, Float>> defaultStringValue;
 	protected Map<PotionEffect, Float> onDamageEffect, onHealEffect;
 	
 	protected boolean canAppliedFire;
@@ -97,14 +98,20 @@ public class Element implements IElementalWritable
 			this.LIST_OF_ELEMENT.put(name, this);
 			this.REF_INT_STRING.put(this.id, this.name);
 			
-			this.defaultValue = new HashMap<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>>();
+			this.defaultClassValue = new HashMap<Class<? extends IElementalWritable>, Map<Class<? extends Entity>, Float>>();
+			this.defaultStringValue = new HashMap<Class<? extends IElementalWritable>, Map<String, Float>>();
 			
 			this.onDamageEffect = new HashMap<PotionEffect, Float>();
 			this.onHealEffect = new HashMap<PotionEffect, Float>();
 			
+			// may initialize some list that will never be used.
 			for(Class clazz : Variable.STATS.keySet())
 			{
-				this.defaultValue.put(clazz, new HashMap<Class<? extends Entity>, Float>());
+				this.defaultClassValue.put(clazz, new HashMap<Class<? extends Entity>, Float>());
+			}
+			for(Class clazz : Variable.STATS.keySet())
+			{
+				this.defaultStringValue.put(clazz, new HashMap<String, Float>());
 			}
 			
 			// boolean configuration (default)
@@ -238,7 +245,13 @@ public class Element implements IElementalWritable
 	 */
 	public Element setDefaultValue(Class<? extends IElementalWritable> stat, Class<? extends Entity> entity, float value) 
 	{
-		defaultValue.get(stat).put(entity, value);
+		defaultClassValue.get(stat).put(entity, value);
+		return this;
+	}
+	
+	public Element setDefaultValue(Class<? extends IElementalWritable> stat, String itemName, float value) 
+	{
+		defaultStringValue.get(stat).put(itemName, value);
 		return this;
 	}
 	
@@ -251,9 +264,9 @@ public class Element implements IElementalWritable
 	 */
 	public float getDefaultValue(Class<? extends IElementalWritable> stat, Class<? extends Entity> entity, float elseFloat)
 	{
-		if(defaultValue.containsKey(stat))
+		if(defaultClassValue.containsKey(stat))
 		{
-			Map<Class<? extends Entity>, Float> map = defaultValue.get(stat);
+			Map<Class<? extends Entity>, Float> map = defaultClassValue.get(stat);
 			if(map.containsKey(entity))
 			{
 				return map.get(entity);
@@ -267,7 +280,24 @@ public class Element implements IElementalWritable
 		return getDefaultValue(stat, entity, 0.0F);
 	}
 	
-
+	public float getDefaultValue(Class<? extends IElementalWritable> stat, String itemName, float elseFloat)
+	{
+		if(defaultStringValue.containsKey(stat))
+		{
+			Map<String, Float> map = defaultStringValue.get(stat);
+			if(map.containsKey(itemName))
+			{
+				return map.get(itemName);
+			}
+		}
+		return elseFloat;
+	}
+	
+	public float getDefaultValue(Class<? extends IElementalWritable> stat, String itemName)
+	{
+		return getDefaultValue(stat, itemName, 0.0F);
+	}
+	
 	@Override
 	/** not functional */
 	public void fromJsonObject(JsonObject j) 

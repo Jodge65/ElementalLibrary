@@ -6,14 +6,16 @@ import java.util.Map;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.Main;
+import fr.Jodge.elementalLibrary.data.DataHelper;
+import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
@@ -23,6 +25,7 @@ import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
@@ -71,8 +74,11 @@ public class ClientElementalConstante extends CommonElementalConstante
 	public void onClientExit()
 	{
 		JLog.info(" --- START PURGE --- ");
+		
 		DEFAULT_STATS.clear();
+		DEFAULT_ITEM_STATS.clear();
 		JLog.info("Default stats clear.");
+		
 		Element.reset();
 		JLog.info("Element clear.");
 
@@ -98,7 +104,7 @@ public class ClientElementalConstante extends CommonElementalConstante
 	@Override
 	public void registerTexture(Item item, int metadata)
 	{
-		String name = item.getUnlocalizedName().substring(item.getUnlocalizedName().indexOf(".") + 1);
+		String name = ItemHelper.getUnlocalizedName(item);
 		ModelLoader.setCustomModelResourceLocation (item , metadata, new ModelResourceLocation (Main.MODID + ":" + name, "inventory"));
 	}
 

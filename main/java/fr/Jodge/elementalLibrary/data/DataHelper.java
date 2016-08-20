@@ -6,16 +6,18 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.EntityDataManager.DataEntry;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.entity.AbstractStats;
-import fr.Jodge.elementalLibrary.data.entity.MonsterStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
+import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 
 public class DataHelper 
@@ -108,5 +110,4 @@ public class DataHelper
 		return matrix;
 		
 	}
-	
 }

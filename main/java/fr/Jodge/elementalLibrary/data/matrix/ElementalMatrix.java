@@ -13,6 +13,8 @@ import java.util.Random;
 import com.google.common.base.Optional;
 import com.google.gson.JsonObject;
 
+import fr.Jodge.elementalLibrary.data.DataHelper;
+import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.function.JLog;
@@ -31,6 +33,7 @@ import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
@@ -141,7 +144,12 @@ public abstract class ElementalMatrix implements IElementalWritable
 	{
 		return get(Element.findById(index));
 	}
+
 	public float get(Element index)
+	{
+		return get(index, 0.0F);
+	}
+	public float get(Element index, float elseValue)
 	{
 		if(matrix.containsKey(index))
 		{
@@ -150,7 +158,7 @@ public abstract class ElementalMatrix implements IElementalWritable
 		else
 		{
 			JLog.warning("Element @" + index.hashCode() + ": " + index + " is not references in Matrix : " + this.matrix);
-			return 0.0F;
+			return elseValue;
 		}
 	}
 	
@@ -166,8 +174,6 @@ public abstract class ElementalMatrix implements IElementalWritable
 			text += entry.getValue();
 			text += ";";
 		}
-		
-		text += "";
 		return text;
 	}
 	
@@ -307,6 +313,46 @@ public abstract class ElementalMatrix implements IElementalWritable
 		}
 		
 		if(!atLeastOne)
+		{
+			matrix.put(Element.findById(0), 1.0F);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param stack <i>ItemStack</i> or <i>String</i> item to update matrixName is used here
+	 * @param clazz <i>Class<? extends ElementalMatrix></i> class needed (use to have the good list of default value. Often, it's this.getClass()
+	 * @param mustHaveOne <i>boolean</i> (optional) set this to false to prevent update to give at least 1.0F to element whit id 0.
+	 */
+	protected void updateItem(ItemStack stack, Class<? extends ElementalMatrix> clazz) 
+	{
+		updateItem(ItemHelper.getMatrixName(stack), clazz);
+	}
+	protected void updateItem(ItemStack stack, Class<? extends ElementalMatrix> clazz, boolean mustHaveOne) 
+	{
+		updateItem(ItemHelper.getMatrixName(stack), clazz, mustHaveOne);
+	}
+	protected void updateItem(String itemName, Class<? extends ElementalMatrix> clazz) 
+	{
+		updateItem(itemName, clazz, true); 
+	}
+	protected void updateItem(String itemName, Class<? extends ElementalMatrix> clazz, boolean mustHaveOne) 
+	{
+		boolean atLeastOne = false;
+		for(Element element : Element.getAllElement())
+		{
+			// Warning : Float is an object, so it can be null.
+			Float value = element.getDefaultValue(clazz, itemName, matrix.get(element));
+			if(value != null)
+			{
+				// if we have a value, we put it.
+				matrix.put(element, value);
+				if(element.isActive())
+					atLeastOne = true;
+			}
+		}
+		
+		if(mustHaveOne && !atLeastOne)
 		{
 			matrix.put(Element.findById(0), 1.0F);
 		}

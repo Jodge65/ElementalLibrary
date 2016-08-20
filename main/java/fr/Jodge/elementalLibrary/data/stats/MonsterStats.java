@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.data.entity;
+package fr.Jodge.elementalLibrary.data.stats;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,21 +44,21 @@ public class MonsterStats extends AbstractStats
 		this.id = id;
 	}
 	
-	public MonsterStats(EntityLivingBase target) 
+	public MonsterStats(EntityLivingBase entity) 
 	{
-		this(target.getEntityId());
-		this.entity = target;
-
-		MinecraftServer server = this.entity.getServer();
-		String subFolder = 	this.entity.getClass().getSimpleName() + "\\";
+		this(entity.getEntityId());
+		this.obj = entity;
+		
+		MinecraftServer server = entity.getServer();
+		String subFolder = 	entity.getClass().getSimpleName() + "\\";
 		String url = folder + subFolder;
 		data = null;
 
 		// check if entity has custom name tag
-		if(this.entity.hasCustomName())
+		if(entity.hasCustomName())
 		{
 			// if yes, then we try whit custom name
-			url += this.entity.getCustomNameTag() + ElementalConfiguration.EXTENTION;
+			url += entity.getCustomNameTag() + ElementalConfiguration.EXTENTION;
 			data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 			
 			if(!data.exists())

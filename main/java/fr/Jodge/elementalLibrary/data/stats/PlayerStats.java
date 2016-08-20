@@ -1,4 +1,4 @@
-package fr.Jodge.elementalLibrary.data.entity;
+package fr.Jodge.elementalLibrary.data.stats;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,12 +36,12 @@ public class PlayerStats extends AbstractStats
 		this.uuid = uuid;
 	}
 	
-	public PlayerStats(EntityPlayer target) 
+	public PlayerStats(EntityPlayer entity) 
 	{
-		this(target.getUniqueID());
-		this.entity = target;
-		MinecraftServer server = target.getServer();
-		String url = folder + target.getUniqueID() + ElementalConfiguration.EXTENTION;
+		this(entity.getUniqueID());
+		this.obj = entity;
+		MinecraftServer server = entity.getServer();
+		String url = folder + entity.getUniqueID() + ElementalConfiguration.EXTENTION;
 		data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 		makeByFile();
 	}

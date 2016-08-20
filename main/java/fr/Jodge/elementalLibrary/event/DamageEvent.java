@@ -60,8 +60,7 @@ public class DamageEvent
 			}
             catch (Throwable throwable)
             {
-            	String text = "A problem occur when " + target.getName() + " is hit by " + source.getDamageType() + "\n"
-        				+	JLog.getDetails((EntityLivingBase) attacker)
+            	String text = "A problem occur when " + target.getName() + " is hit by damage sources " + source.getDamageType() + "\n"
         				+	JLog.getDetails(target)
         				;
             	

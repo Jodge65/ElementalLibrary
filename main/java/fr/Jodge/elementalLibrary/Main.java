@@ -44,7 +44,8 @@ public class Main
 	public static ElementalLibraryDebug DEBUG_WINDOWS;
 	
 	public static boolean isTinkerConstructLoaded;
-	
+	public static boolean isBaubleLoaded;
+
 	// this is needed on server side to force class to be loaded.
 	public static DataSerializer ELEMENTAL_SERIALIZER = ElementalDataSerializers.ELEMENTAL_SERIALIZER;
 	
@@ -60,6 +61,7 @@ public class Main
 	public void preInit(FMLPreInitializationEvent event)
 	{	
 		isTinkerConstructLoaded = Loader.isModLoaded("tconstruct");
+		isBaubleLoaded = Loader.isModLoaded("Baubles");
 		
 		configFile = ConfigurationHelper.getInstance(event);
 		configFile.onPreInit();

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
@@ -14,8 +15,10 @@ import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
+import fr.Jodge.elementalLibrary.data.matrix.ShieldMatrix;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Variable;
+import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -27,9 +30,11 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -59,30 +64,48 @@ public class DamageHelper
 		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
 		environnementMatrix.autoUptdate(attacker);
 		
-		DamageMatrix damageMatrix;
+		List<ShieldMatrix> shieldsMatrix = new ArrayList<ShieldMatrix>();
+		for(ItemStack stack : targetEntity.getArmorInventoryList())
+		{
+			if(stack != null)
+			{
+				ShieldMatrix tempMatrix = (ShieldMatrix) Getter.getItemStats(stack).getStat(ShieldMatrix.class);
+				shieldsMatrix.add(tempMatrix);
+			}
+		}
+		
+		if(Main.isBaubleLoaded)
+		{
+			// TODO add bauble item (if API 1.10 exist)
+			/*for(ItemStack stack : targetEntity.getArmorInventoryList())
+			{
+				ShieldMatrix tempMatrix = new ShieldMatrix();
+				tempMatrix.autoUptdate(stack);
+				shieldsMatrix.add(tempMatrix);
+			}*/
+		}
+
+		ShieldMatrix armorMatrix = ShieldMatrix.calculArmor(shieldsMatrix);
+		DamageMatrix damageMatrix = null;
 		
 		ItemStack itemStack = null; 
 
 		EnumHand hand = attacker.getActiveHand();
-		if(hand != null )
+		if(hand != null)
 			itemStack = attacker.getHeldItem(hand);
 		
-		if(itemStack != null) 
+
+		ItemStats baseItem = Getter.getItemStats(itemStack);
+		if(baseItem != null)
 		{
-			Item activeItem = itemStack.getItem();
-			
-			damageMatrix = Getter.getDamageBruteFromItem(activeItem);
-			if(damageMatrix == null)
-			{
-				damageMatrix = new DamageMatrix(0.0F);
-				damageMatrix.autoUpdateDamage(attacker, oldValue);
-			}
+			damageMatrix = ((DamageMatrix) baseItem.getStat(DamageMatrix.class)).clone();
 		}
 		else
 		{
-			damageMatrix = new DamageMatrix(0.0F);
-			damageMatrix.autoUpdateDamageHand(attacker, oldValue);
+			damageMatrix = new DamageMatrix().autoUpdateHand(attacker);
 		}
+		damageMatrix.autoUpdate(attacker, oldValue);
+
 	
 		for(Element element : Element.getAllActiveElement() )
 		{
@@ -94,7 +117,9 @@ public class DamageHelper
 				float atkMultiplier = atkMatrix.get(element);
 				float resDivider = resistMatrix.get(element);
 				float enviMultiplier = environnementMatrix.get(element);	
-				theoriqueDamage = baseDamage * atkMultiplier * resDivider * enviMultiplier;
+				float armorDivider = armorMatrix.get(element);
+				theoriqueDamage = baseDamage * atkMultiplier * resDivider * enviMultiplier * armorDivider;
+				
 			}
 			damageByElement.put(element, theoriqueDamage);
 		}
@@ -109,6 +134,7 @@ public class DamageHelper
 			JLog.write("Matrix ATK   : " + atkMatrix.toString());
 			JLog.write("Matrix DEF   : " + resistMatrix.toString());
 			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
+			JLog.write("Matrix ARMOR : " + armorMatrix.toString());
 			JLog.write("Matrix FINAL : " + returnValue.toString());
 		}
 		else
@@ -120,13 +146,13 @@ public class DamageHelper
 			JLog.write("Matrix ATK   : " + atkMatrix.toString());
 			JLog.write("Matrix DEF   : " + resistMatrix.toString());
 			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
+			JLog.write("Matrix ARMOR : " + armorMatrix.toString());
 			JLog.write("Matrix FINAL : " + returnValue.toString());
 		}		
 		return returnValue;
 
 	}
 	
-
 	/**
 	 * Change Damage Calculation based on oldSource. Applied to a list of entity.
 	 * 
@@ -167,6 +193,17 @@ public class DamageHelper
 			{
 				// TODO change method to work whit IProjectile without rebound effect
 			}
+			
+			/* TODO add potion effect... Maybe...
+			if (this.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.outOfWorld)
+            {
+                int i = (this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
+                int j = 25 - i;
+                float f = damage * (float)j;
+                damage = f / 25.0F;
+            }
+			 */
+			
 			target.attackEntityFrom(new EntityElementalDamageSource(oldSource, calculDamage), calculDamage.getTotalDamage());
 		}
 
@@ -249,7 +286,7 @@ public class DamageHelper
 	 */
 	public static void distanceDamage (IProjectile projectile, EntityLivingBase attacker, EntityLivingBase target, float damage)
 	{
-		
+		// TODO fix rebound effect, and adapte for each kind of projectil
         double d0 = target.posX - attacker.posX;
         double d1 = target.getEntityBoundingBox().minY + target.height / 3.0F;
         

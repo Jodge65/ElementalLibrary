@@ -81,8 +81,7 @@ public class DefenceMatrix extends ElementalMatrix
 			else
 			{
 				// if defaultMatrix is null, we don't have any default value... So we initialize it.
-				super.updateEntity(target, this.getClass());
-					
+				updateEntity(target, this.getClass());	
 			}// end of else no default value.
 		}
 

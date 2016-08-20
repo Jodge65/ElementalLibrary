@@ -8,11 +8,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.DataHelper;
-import fr.Jodge.elementalLibrary.data.entity.MonsterStats;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
 import fr.Jodge.elementalLibrary.function.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;

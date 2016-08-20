@@ -18,6 +18,7 @@ public class EntityElementalDamageSource extends EntityDamageSource implements I
 	{
 		super(damageTypeIn, damageSourceEntityIn);
 		this.damageMatrix = damageMatrix;
+		this.setDamageBypassesArmor();
 	}
 	
 	public EntityElementalDamageSource(EntityDamageSource oldSource, FinalMatrix damageMatrix) 

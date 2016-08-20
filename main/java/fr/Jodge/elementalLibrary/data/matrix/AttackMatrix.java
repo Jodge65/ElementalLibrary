@@ -82,7 +82,7 @@ public class AttackMatrix extends ElementalMatrix
 			else
 			{
 				// if defaultMatrix is null, we don't have any default value... So we initialize it.
-				super.updateEntity(target, this.getClass());
+				updateEntity(target, this.getClass());
 			} // end of else no default matrix
 		}
 	} // end of auto update

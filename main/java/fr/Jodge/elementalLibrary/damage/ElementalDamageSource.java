@@ -7,6 +7,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.translation.I18n;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalDamageSource;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 
@@ -23,6 +24,7 @@ public class ElementalDamageSource  extends DamageSource implements IElementalDa
 	{
 		super(damageTypeIn);
 		this.damageMatrix = damageMatrix;
+		this.setDamageBypassesArmor();
 	}
 	
 	public ElementalDamageSource(DamageSource oldSource, FinalMatrix damageMatrix) 
