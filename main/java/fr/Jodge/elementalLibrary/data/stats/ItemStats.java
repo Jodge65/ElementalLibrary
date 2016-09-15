@@ -7,7 +7,8 @@ import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.data.register.Variable;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class ItemStats extends AbstractStats
 {	
@@ -32,9 +33,9 @@ public class ItemStats extends AbstractStats
 		// check if entity has custom name tag
 		if(stack.hasTagCompound())
 		{
-			if(stack.getTagCompound().hasKey("defaultMatrix"))
+			if(stack.getTagCompound().hasKey(Variable.DEFAULT_MATRIX_KEY))
 			{
-				url += stack.getTagCompound().getString("defaultMatrix") + ElementalConfiguration.EXTENTION;
+				url += stack.getTagCompound().getString(Variable.DEFAULT_MATRIX_KEY) + ElementalConfiguration.EXTENTION;
 				data = server.getActiveAnvilConverter().getFile(server.getFolderName(), url);
 				if(!data.exists())
 				{

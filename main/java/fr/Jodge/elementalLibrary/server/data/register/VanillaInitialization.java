@@ -1,5 +1,6 @@
 package fr.Jodge.elementalLibrary.server.data.register;
 
+import baubles.common.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,6 +19,7 @@ import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
@@ -57,6 +59,11 @@ public class VanillaInitialization
 		Element hunger = Element.addOrGet("hunger").addOnDamageEffect(new PotionEffect(MobEffects.HUNGER, 5, 2), 0.9F).addOnHealEffect(new PotionEffect(MobEffects.SATURATION, 5, 2), 0.9F);
 		
 		// ATK
+		/*
+		 	in theory, each kind of stats references in Variable.STATS can be put without bug.
+		 	Their are no protection cause a wrong class will cause a NPE and crash the game.
+		 	If it's appear, check if you already use "Register.addNewStats(MyClass.class);".
+		 */
 		normal.setDefaultValue(atk, EntityShulker.class, 1.0F);
 		normal.setDefaultValue(atk, EntitySilverfish.class, 1.0F);
 		normal.setDefaultValue(atk, EntityPig.class, 1.0F);
@@ -203,6 +210,20 @@ public class VanillaInitialization
 		poison.setDefaultValue(def, EntityWither.class, 0.0F);
 
 		// DAM
+		/*
+		  	you can put the value you want, and total can be over 1.0F.
+			When matrix is initialized, the total value will be set to 1.0F.
+			All value will be scale to is newer value, during game process.
+			To prevent from useless calculation, the best solution is to do a final result of 1.0F
+			(for example, clay have 0.5F dirt and 0.5Water, it's mean 1.0F total)
+			Value negative also count : Milk Bucket have 0.75 normal and -0.25hunger.
+			It's mean that the total is : |0.75| + |-0.25| = 0.75 + 0.25 = 1.0F
+			maybe you understand, total of value will be equal to 1.0F, don't care if their are negative or not
+			
+			If you add your own element, and want to change some existing, you have two way : 
+			- use "removeDefaultValue" to remove each value, and start whit a new clean (not recommended cause if an other mod do the same, you can erase is value)
+			- add your own value, and think that 1.0F is already here. So, to put 0.5F, write 1.0F
+		 */
 		normal.setDefaultValue(dam, ItemHelper.getUnlocalizedName(Blocks.TORCH), 0.5F);
 		normal.setDefaultValue(dam, ItemHelper.getUnlocalizedName(Items.MILK_BUCKET), 0.75F);
 
@@ -237,7 +258,7 @@ public class VanillaInitialization
 
 		hunger.setDefaultValue(dam, ItemHelper.getUnlocalizedName(Items.MILK_BUCKET), -0.25F);
 
-		
+		// I'm a lazy coder :D
 		Item weapons[][] =
 			{
 				{Items.WOODEN_SWORD, Items.STONE_SWORD, Items.GOLDEN_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD},
@@ -258,6 +279,7 @@ public class VanillaInitialization
 			normal.setDefaultValue(dam, ItemHelper.getUnlocalizedName(i[4]), 1.0F);
 		}
 
+		// not really sure that think is working...
 		for(Block block : Block.REGISTRY)
 		{
 			Item item = Item.getItemFromBlock(block);
@@ -279,6 +301,13 @@ public class VanillaInitialization
 		}
 
 		// SHI
+		/*
+		 	More the value is high, more damage will be TAKEN !
+		 	A good armor is close to 0
+		 	ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS)
+		 	is a function that will give Minecraft damage reduction based on ItemMaterial.
+		 	It only work for ItemArmor (or extend class)
+		 */
 		// leather
 		water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_BOOTS),
 				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.5F);
@@ -400,6 +429,21 @@ public class VanillaInitialization
 				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_HELMET) * 1.25F);
 		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_LEGGINGS),
 				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_LEGGINGS) * 1.25F);
+
+		if(Main.isBaubleLoaded)
+		{
+			normal.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			wind.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			wood.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			holy.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			dark.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+			hunger.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
+		}
 		
 		// DAMAGE SOURCES
 		Register.addNewElementOnDamageSources(DamageSource.anvil, dirt);
@@ -417,11 +461,16 @@ public class VanillaInitialization
 		Register.addNewElementOnDamageSources(DamageSource.lightningBolt, thunder);
 		Register.addNewElementOnDamageSources(DamageSource.magic, normal);
 		Register.addNewElementOnDamageSources(DamageSource.onFire, fire);
+		Register.setDamageSourceUseEffect(DamageSource.onFire, false); // prevent from infinite fire
 		Register.addNewElementOnDamageSources(DamageSource.outOfWorld, dark);
 		Register.addNewElementOnDamageSources(DamageSource.starve, hunger);
+		Register.setDamageSourceUseEffect(DamageSource.starve, false); // prevent from infinite hunger
 		Register.addNewElementOnDamageSources(DamageSource.wither, poison);
-		
-		//Register.addNewWeaponMatrix(Items.IRON_SWORD, new DamageMatrix());
+		Register.setDamageSourceUseEffect(DamageSource.wither, false); // prevent player from get double damage (cause of poison)
+
+		Register.addNewElementOnDamageSources("arrow", normal);
+		Register.addNewElementOnDamageSources("indirectMagic", normal);
+		Register.addNewElementOnDamageSources("thrown", normal);
 
 	}
 	

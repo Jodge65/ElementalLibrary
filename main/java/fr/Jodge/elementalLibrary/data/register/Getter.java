@@ -23,7 +23,7 @@ import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class Getter extends Register
 {
@@ -33,7 +33,7 @@ public class Getter extends Register
 		String itemName = ItemHelper.getMatrixName(stack);
 		return DEFAULT_ITEM_STATS.getOrDefault(itemName, null);
 	}
-	
+
 	@Nullable
 	public static ItemStats getItemStats(ItemStack stack)
 	{
@@ -44,7 +44,7 @@ public class Getter extends Register
 			if(!DEFAULT_ITEM_STATS.containsKey(itemName))
 			{
 				ItemHelper.initItem(stack);
-				JLog.error("Value not exist. Waiting for Server to send value...");
+				JLog.warning("Value not exist. Waiting for Server to send value...");
 			}
 			
 			int waitingTime = 0;
@@ -53,7 +53,7 @@ public class Getter extends Register
 				waitingTime++;
 				if(waitingTime % 1000 == 0)
 				{
-					JLog.info("Waiting... " + waitingTime % 1000 + "/10");
+					JLog.info("Waiting... " + waitingTime / 1000 + "/10");
 				}
 				if(waitingTime >= 10000)
 				{
@@ -66,6 +66,7 @@ public class Getter extends Register
 		}
 		else
 		{
+			JLog.error("You ask stats for null ItemStack... Are you crazy ?");
 			return null;
 		}
 		
@@ -152,5 +153,16 @@ public class Getter extends Register
 			returnValue.set(Element.findById(0), amount);
 		}
 		return returnValue;
+	}
+
+	public static boolean canApplyEffect(DamageSource source) 
+	{
+		if(DEFAULT_EFFECT_DAMAGE_SOURCES.containsKey(source.getDamageType()))
+			return DEFAULT_EFFECT_DAMAGE_SOURCES.get(source.getDamageType());
+		else
+		{
+			JLog.alert("DamageSources " + source.getDamageType() + " is not references... Additional Effect set to true.");
+			return true;
+		}
 	}
 }

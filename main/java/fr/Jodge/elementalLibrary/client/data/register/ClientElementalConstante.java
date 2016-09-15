@@ -26,7 +26,7 @@ import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
 import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
 

@@ -6,7 +6,8 @@ import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -14,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -38,7 +40,8 @@ public class ItemStatsPacket implements IMessage
 	{
 		NBTTagCompound itemTag = BufUtils.readTag(buf);
 		ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
-		stats = new ItemStats(stack, Minecraft.getMinecraft().thePlayer.getServer());
+		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		stats = new ItemStats(stack, server);
 				
 		for(Class<? extends IElementalWritable> clazz : Main.constante.ITEM_STATS)
 		{
@@ -55,7 +58,7 @@ public class ItemStatsPacket implements IMessage
 			catch (Throwable throwable) 
 			{
 				String text = "Can't create value from " + clazz;
-				JLog.crashReport(throwable, text);
+				ElementalCrashReport.crashReport(throwable, text);
 			}
 		}
 	}

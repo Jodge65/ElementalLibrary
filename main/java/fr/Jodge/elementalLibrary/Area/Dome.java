@@ -3,7 +3,7 @@ package fr.Jodge.elementalLibrary.area;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 /**
  * 

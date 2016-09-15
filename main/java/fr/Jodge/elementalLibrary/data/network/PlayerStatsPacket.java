@@ -15,7 +15,8 @@ import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.stats.PlayerStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -64,7 +65,7 @@ public class PlayerStatsPacket implements IMessage
 			catch (Throwable throwable) 
 			{
 				String text = "Can't create value from " + clazz;
-				JLog.crashReport(throwable, text);
+				ElementalCrashReport.crashReport(throwable, text);
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.register.Getter;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -62,7 +62,7 @@ public class DefenceMatrix extends ElementalMatrix
 	}
 
 	@Override
-	public void autoUptdate(Object obj)
+	public void autoUpdate(Object obj)
 	{
 		
 		if(obj instanceof Entity)

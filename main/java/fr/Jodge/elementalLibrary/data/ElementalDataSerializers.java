@@ -6,7 +6,8 @@ import scala.Int;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.BufUtils;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
@@ -39,7 +40,7 @@ public class ElementalDataSerializers extends DataSerializers
 			catch (Throwable throwable) 
 			{
 				String text = "Can't create new instance from " + unknowClass;
-				JLog.crashReport(throwable, text);
+				ElementalCrashReport.crashReport(throwable, text);
 				return null;
 			}
 	    }

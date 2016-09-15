@@ -19,7 +19,7 @@ import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public  class Register extends Variable
 {
@@ -56,13 +56,13 @@ public  class Register extends Variable
 		if(!DEFAULT_ITEM_STATS.containsKey(name))
 			DEFAULT_ITEM_STATS.put(name, stats);
 		else
-			JLog.alert("Item " + name + " is already references. ");
+			JLog.warning("Item " + name + " is already references. ");
 	}
 	
 	/**
 	 * Add new Default Element to a DamageSources. Use DamageType.
-	 * @param name <i>String</i> 
-	 * @param element <i>Element</i>
+	 * @param sources <i>DamageSource</i> or <i>String</i> damage source
+	 * @param Element <i>Element</i> element
 	 */
 	public static void addNewElementOnDamageSources(DamageSource sources, Element element)
 	{
@@ -71,6 +71,7 @@ public  class Register extends Variable
 	public static void addNewElementOnDamageSources(String name, Element element)
 	{
 		DEFAULT_ELEMENT_DAMAGE_SOURCES.put(name, element);
+		DEFAULT_EFFECT_DAMAGE_SOURCES.put(name, true); //we initialize whit true each time to prevent bug.
 	}
 	
 	/**
@@ -85,6 +86,22 @@ public  class Register extends Variable
 	public static void addNewDefaultEntity(Class clazz, AbstractStats stats)
 	{
 		DEFAULT_STATS.put(clazz, stats);
+	}
+	
+	/**
+	 * this function will prevent damage source from giving extra effect.
+	 * It's use for example in onFire to prevent player from get an extra fire time each time he burn (which result in an infinite fire)
+	 * By default, each value is initialize to true, so you don't need to use this if you want to put true
+	 * @param sources <i>DamageSource</i> or <i>String</i> damage source
+	 * @param needToApply <i>boolean</i> value
+	 */
+	public static void setDamageSourceUseEffect(DamageSource sources, boolean needToApply)
+	{
+		setDamageSourceUseEffect(sources.getDamageType(), needToApply);
+	}
+	public static void setDamageSourceUseEffect(String name, boolean needToApply) 
+	{
+		DEFAULT_EFFECT_DAMAGE_SOURCES.put(name, needToApply);
 	}
 
 	

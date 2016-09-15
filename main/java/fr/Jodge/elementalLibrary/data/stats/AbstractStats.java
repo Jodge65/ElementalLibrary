@@ -32,7 +32,7 @@ import com.google.gson.JsonParser;
 
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public abstract class AbstractStats
 {
@@ -106,7 +106,7 @@ public abstract class AbstractStats
 			try 
 			{
 				IElementalWritable objet = clazz.newInstance();
-				objet.autoUptdate(obj);
+				objet.autoUpdate(obj);
 				value.put(clazz, objet);
 			}  
 			catch (Exception e) 

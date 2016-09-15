@@ -64,7 +64,7 @@ public class EnvironmentalMatrix extends ElementalMatrix
 	}
 	
 	@Override
-	public void autoUptdate(Object obj)
+	public void autoUpdate(Object obj)
 	{
 		if(obj instanceof Entity)
 		{

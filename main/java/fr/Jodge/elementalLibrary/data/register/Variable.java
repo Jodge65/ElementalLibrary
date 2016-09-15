@@ -31,7 +31,10 @@ public class Variable
 	
 	/** default stats socket use by this mod */
 	public static SimpleNetworkWrapper STATS_SOCKET;
+	/** default name use by socket (id) */
 	public static String STATS_ID = Main.MODID;
+	/** 'defaultMatrix' key use in Item (and Entity that include IProjectile) in NbtTag to get Custom Matrix */
+	public static String DEFAULT_MATRIX_KEY = "defaultMatrix";
 	
 	// FROM HERE, CHANGE DURING EXECUTE
 	/** Save Default Stats to use it again instead of ask server/read file  */
@@ -42,6 +45,7 @@ public class Variable
 
 	/** Default element or each kind of damage source */
 	public static Map<String, Element> DEFAULT_ELEMENT_DAMAGE_SOURCES;
+	public static Map<String, Boolean> DEFAULT_EFFECT_DAMAGE_SOURCES;
 	
 	/** */
 	public static Map<Class, Map<Class, IElementalWritable>> VALUE_REGISTER;

@@ -31,7 +31,7 @@ import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -108,6 +108,9 @@ public class CommonElementalConstante extends Variable
 
 		DEFAULT_ELEMENT_DAMAGE_SOURCES = new HashMap<String, Element>();
 		JLog.info("New map have been create for DEFAULT_ELEMENT_DAMAGE_SOURCES");
+		
+		DEFAULT_EFFECT_DAMAGE_SOURCES = new HashMap<String, Boolean>();
+		JLog.info("New map have been create for DEFAULT_EFFECT_DAMAGE_SOURCES");
 
 	}
 	

@@ -20,6 +20,9 @@ public class FinalMatrix extends ElementalMatrix
 	protected boolean asToApplyedDamageEffect = false;
 	protected boolean asToApplyedHealEffect = false;
 	
+	/** you need to initialize this value if you set asToApplyedDamageEffect or asToApplyedHealEffect to true*/
+	public DamageMatrix domMatrix;
+	
 	public FinalMatrix()
 	{
 		this(0.0F);
@@ -36,6 +39,17 @@ public class FinalMatrix extends ElementalMatrix
 		doCalculation();
 	}
 
+	@Override
+	public FinalMatrix clone()
+	{
+		FinalMatrix newMatrix = new FinalMatrix();
+		for(Entry<Element, Float> entry : this.matrix.entrySet())
+		{
+			newMatrix.set(entry.getKey(), entry.getValue());
+		}
+		return newMatrix;
+	}
+	
 	public FinalMatrix updateCalculation()
 	{
 		currentDamage = 0;
@@ -56,6 +70,12 @@ public class FinalMatrix extends ElementalMatrix
 		return this;
 	}
 	
+	public FinalMatrix useThisAsDamageMatrix()
+	{
+		domMatrix = new DamageMatrix();
+		return this;
+	}
+	
 	/** @return </i>float</i> total damage */
 	public float getTotalDamage(){return currentDamage;}
 	/** @return </i>float</i> total heal */
@@ -65,11 +85,53 @@ public class FinalMatrix extends ElementalMatrix
 	/** @return </i>boolean</i> true if need to apply effect. */
 	public boolean getNeedToApplyedDamageEffect(){return asToApplyedDamageEffect;}
 	
+	public FinalMatrix setNeedToApplyedEffect(boolean canApplyEffect) 
+	{
+		asToApplyedHealEffect = canApplyEffect; 
+		asToApplyedDamageEffect = canApplyEffect; 
+		if(matrix == null)
+		{
+			useThisAsDamageMatrix();
+		}
+		return this;
+	}
+	public FinalMatrix setNeedToApplyedEffect(boolean canApplyEffect, DamageMatrix matrix)
+	{
+		domMatrix = matrix;
+		return setNeedToApplyedEffect(canApplyEffect);
+	}
+	
 	public FinalMatrix setNeedToApplyedHealEffect(){return setNeedToApplyedHealEffect(true);}
-	public FinalMatrix setNeedToApplyedHealEffect(boolean value){asToApplyedHealEffect = value; return this;}
+	public FinalMatrix setNeedToApplyedHealEffect(boolean value)
+	{
+		asToApplyedHealEffect = value; 
+		if(matrix == null)
+		{
+			useThisAsDamageMatrix();
+		}
+		return this;
+	}
+	public FinalMatrix setNeedToApplyedHealEffect(boolean value, DamageMatrix matrix)
+	{
+		domMatrix = matrix;
+		return setNeedToApplyedHealEffect(value);
+	}
 	
 	public FinalMatrix setNeedToApplyedDamageEffect(){return setNeedToApplyedDamageEffect(true);}
-	public FinalMatrix setNeedToApplyedDamageEffect(boolean value){asToApplyedDamageEffect = value; return this;}
+	public FinalMatrix setNeedToApplyedDamageEffect(boolean value)
+	{
+		asToApplyedDamageEffect = value;
+		if(matrix == null)
+		{
+			useThisAsDamageMatrix();
+		}
+		return this;
+	}
+	public FinalMatrix setNeedToApplyedDamageEffect(boolean value, DamageMatrix matrix)
+	{
+		domMatrix = matrix;
+		return setNeedToApplyedDamageEffect(value);
+	}
 	
 	@Override
 	public void fromJsonObject(JsonObject j)
@@ -77,6 +139,14 @@ public class FinalMatrix extends ElementalMatrix
 		super.fromJsonObject(j);
 		asToApplyedHealEffect = j.getAsJsonObject("asToApplyedHealEffect").getAsBoolean();
 		asToApplyedDamageEffect = j.getAsJsonObject("asToApplyedDamageEffect").getAsBoolean();
+		if(asToApplyedHealEffect || asToApplyedDamageEffect)
+		{
+			if(j.getAsJsonObject("DamageMatrixExist").getAsBoolean())
+			{
+				domMatrix = new DamageMatrix();
+				domMatrix.fromJsonObject(j.getAsJsonObject("DamageMatrix"));	
+			}
+		}
 	}
 	
 	@Override
@@ -85,6 +155,14 @@ public class FinalMatrix extends ElementalMatrix
 		JsonObject j = super.toJsonObject();
 		j.addProperty("asToApplyedHealEffect", asToApplyedHealEffect);
 		j.addProperty("asToApplyedDamageEffect", asToApplyedDamageEffect);
+		if(asToApplyedHealEffect || asToApplyedDamageEffect)
+		{
+			j.addProperty("DamageMatrixExist", domMatrix != null);
+			if(domMatrix != null)
+			{
+				j.add("DamageMatrix", domMatrix.toJsonObject());
+			}
+		}
 		return j;
 	}
 	
@@ -94,6 +172,14 @@ public class FinalMatrix extends ElementalMatrix
 		super.toByte(buf);
 		buf.writeBoolean(asToApplyedHealEffect);
 		buf.writeBoolean(asToApplyedDamageEffect);
+		if(asToApplyedHealEffect || asToApplyedDamageEffect)
+		{
+			buf.writeBoolean(domMatrix != null);
+			if(domMatrix != null)
+			{
+				domMatrix.toByte(buf);
+			}
+		}
 	}
 	
 
@@ -103,10 +189,18 @@ public class FinalMatrix extends ElementalMatrix
 		super.fromByte(buf);
 		asToApplyedHealEffect = buf.readBoolean();
 		asToApplyedDamageEffect = buf.readBoolean();
+		if(asToApplyedHealEffect || asToApplyedDamageEffect)
+		{
+			if(buf.readBoolean())
+			{
+				domMatrix = new DamageMatrix();
+				domMatrix.fromByte(buf);	
+			}
+		}
 	}
 	
 	@Override
 	// never used here
-	public void autoUptdate(Object obj){}
+	public void autoUpdate(Object obj){}
 
 }

@@ -35,5 +35,5 @@ public interface IElementalWritable
 	 * Use to auto update value by entity.
 	 * @param obj <i>Object</i>
 	 */
-	public void autoUptdate(Object obj);
+	public void autoUpdate(Object obj);
 }

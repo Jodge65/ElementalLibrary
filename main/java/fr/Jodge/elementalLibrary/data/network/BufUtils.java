@@ -2,7 +2,8 @@ package fr.Jodge.elementalLibrary.data.network;
 
 import java.util.UUID;
 
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
 
 import org.apache.commons.lang3.Validate;
@@ -53,7 +54,7 @@ public class BufUtils extends ByteBufUtils
     	catch (Throwable throwable) 
     	{
     		String text = "And error occure when try to make a class whit string : " + stringClass;
-    		JLog.crashReport(throwable, text);
+    		ElementalCrashReport.crashReport(throwable, text);
 		}
     	
     	return returnValue;

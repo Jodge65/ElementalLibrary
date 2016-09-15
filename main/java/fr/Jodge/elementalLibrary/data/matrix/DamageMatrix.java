@@ -1,5 +1,6 @@
 package fr.Jodge.elementalLibrary.data.matrix;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,12 @@ import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.register.Getter;
+import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityBlaze;
@@ -49,6 +52,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,6 +69,18 @@ public class DamageMatrix extends ElementalMatrix
 		totalDamage = 0.0F;
 		isDirty = true;
 	}
+	public DamageMatrix(FinalMatrix matrix)
+	{
+		super(0.0F);
+		totalDamage = 0.0F;
+		isDirty = true;
+		for(Element element : Element.getAllElement())
+		{
+			set(element, matrix.get(element));
+		}
+		unDirty();
+	}
+	
 	@Override
 	public DamageMatrix clone()
 	{
@@ -77,7 +93,7 @@ public class DamageMatrix extends ElementalMatrix
 	}
 	
 	@Override
-	public void autoUptdate(Object obj)
+	public void autoUpdate(Object obj)
 	{
 		if(obj instanceof ItemStack)
 		{
@@ -102,10 +118,48 @@ public class DamageMatrix extends ElementalMatrix
 		return this;
 	}
 	
-	public void autoUpdate(EntityLivingBase entity, float oldValue) 
+	public DamageMatrix autoUpdate(EntityLivingBase entity, float oldValue) 
 	{
 		totalDamage = getDamageFromEntity(entity, oldValue);
 		unDirty();
+		return this;
+	}
+	
+	public DamageMatrix autoUpdate(IProjectile projectile, float oldValue) 
+	{
+		if(projectile instanceof Entity)
+		{
+			Entity entityProjectile = ((Entity)projectile);
+			
+			// base Item Creation
+			ItemStack stack = new ItemStack(new Item().setUnlocalizedName(entityProjectile.getName()));
+			
+			// Add custom if needed
+			NBTTagCompound data = entityProjectile.getEntityData();
+			if(data.hasKey(Variable.DEFAULT_MATRIX_KEY))
+			{
+				String matrixName = data.getString(Variable.DEFAULT_MATRIX_KEY);
+				stack.getTagCompound().setString(Variable.DEFAULT_MATRIX_KEY, matrixName);
+			}
+
+			ItemStats stats = Getter.getItemStats(stack);
+			
+			if(stats != null)
+			{
+				DamageMatrix projectileMatrix = (DamageMatrix) stats.getStat(this.getClass());
+				if(projectileMatrix != null)
+				{
+					for(Element element : Element.getAllElement())
+					{
+						float newValue = get(element) * projectileMatrix.get(element);
+						set(element, newValue);
+					}
+				}
+			}
+			totalDamage = oldValue;
+		} // end of if IProjectile instance of Entity
+		unDirty();
+		return this;
 	}
 	
 	@Override
@@ -219,6 +273,9 @@ public class DamageMatrix extends ElementalMatrix
 	public float get(Element index)
 	{
 		return super.get(index) * totalDamage;
-	}	
+	}
+	
+
+		
 	
 }

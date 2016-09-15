@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.data.register.Variable;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 
 public class InitDamageSourcePacket implements IMessage
@@ -27,7 +27,10 @@ public class InitDamageSourcePacket implements IMessage
 			String name = BufUtils.readUTF8String(buf);
 			Element element = Element.findById(buf.readInt());
 			Register.addNewElementOnDamageSources(name, element);
+			boolean needToApply = buf.readBoolean();
+			Register.setDamageSourceUseEffect(name, needToApply);
 		}
+
 	}
 
 	@Override
@@ -38,7 +41,10 @@ public class InitDamageSourcePacket implements IMessage
 		{
 			BufUtils.writeUTF8String(buf, entry.getKey());
 			buf.writeInt(entry.getValue().getId());
+			boolean needToApply = Variable.DEFAULT_EFFECT_DAMAGE_SOURCES.getOrDefault(entry.getKey(), true);
+			buf.writeBoolean(needToApply);
 		}
+
 	}
 	
 	public static class Handler implements IMessageHandler<InitDamageSourcePacket, IMessage>

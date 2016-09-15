@@ -8,12 +8,14 @@ import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalDamageSource;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.EntityDataManager.DataEntry;
@@ -23,12 +25,13 @@ import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class DamageEvent 
 {
-
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onAttack(LivingAttackEvent event)
 	{
@@ -38,7 +41,7 @@ public class DamageEvent
 		Entity attacker = null;
 		if(source instanceof IElementalDamageSource)
 		{
-			// if event is an instance of IElementalDamageSource, then we already pass trough this place and don't need it anymore
+			// if event is an instance of IElementalDamageSource, then we don't need to do something.
 			event.setCanceled(false);
 			return;
 		}
@@ -46,10 +49,10 @@ public class DamageEvent
 		{
 			attacker = source.getEntity();
 		}
-			
+
 		EntityLivingBase target = event.getEntityLiving();
 		boolean needCanceld = false;
-
+		
 		// check of attacker
 		if(attacker == null)
 		{
@@ -61,43 +64,94 @@ public class DamageEvent
             catch (Throwable throwable)
             {
             	String text = "A problem occur when " + target.getName() + " is hit by damage sources " + source.getDamageType() + "\n"
-        				+	JLog.getDetails(target)
+        				+	ElementalCrashReport.getDetails(target)
         				;
             	
-            	JLog.crashReport(throwable, text);
+            	ElementalCrashReport.crashReport(throwable, text);
             }
 		}
 		else
 		{
 			// else we have an entity which deal damage
 			if(attacker instanceof EntityLivingBase)
-			{
+			{		
 				try
 				{
 					// If attacker is an instance of living base, then it's something alive, and source came from EntityDamageSource
-					FinalMatrix damageMatrix = DamageHelper.calculDamage((EntityLivingBase)attacker, target, event.getAmount());
-					DamageHelper.dealDamage((EntityLivingBase)attacker, target, (EntityDamageSource)source, damageMatrix);
+					FinalMatrix damageMatrix = null;
+
+					if(source instanceof EntityDamageSourceIndirect)
+					{
+						Entity projectile = ((EntityDamageSourceIndirect)source).getSourceOfDamage();
+
+						if(projectile instanceof IProjectile)
+						{
+							damageMatrix = DamageHelper.calculDistanceDamage((IProjectile)projectile, attacker, target, event.getAmount());
+						}
+
+					}
+					
+					if(damageMatrix == null)
+					{
+						damageMatrix = DamageHelper.calculDamage(attacker, target, event.getAmount());
+					}
+					
+					DamageHelper.dealDamage(attacker, target, (EntityDamageSource)source, damageMatrix);
 					needCanceld = true;
 				}
 	            catch (Throwable throwable)
 	            {
 	            	String text = "A problem occur when " + attacker.getName() + " try to hit " + target.getName() + "\n"
-            				+	JLog.getDetails((EntityLivingBase) attacker)
-            				+	JLog.getDetails(target)
+            				+	ElementalCrashReport.getDetails((EntityLivingBase) attacker)
+            				+	ElementalCrashReport.getDetails(target)
             				;
 	            	
-	            	JLog.crashReport(throwable, text);
+	            	ElementalCrashReport.crashReport(throwable, text);
 	            }
 			}
 			else
 			{
-				// else, it's an other kind of entity... 
-				JLog.write("### SOURCE heuuu... : " + source + ", Entité: " + attacker); 
-				// TODO DamageSource without entity
+				// else is a damage source whitout entity (dispenser)
+				if(source instanceof EntityDamageSourceIndirect)
+				{
+					try
+					{
+						DamageHelper.ElementalizeDamageSource(target, source, event.getAmount());
+						needCanceld = true;
+					}
+		            catch (Throwable throwable)
+		            {
+		            	String text = "A problem occur when " + target.getName() + " is hit by damage indirect sources " + source.getDamageType() + "\n"
+		        				+	ElementalCrashReport.getDetails(target)
+		        				;
+		            	
+		            	ElementalCrashReport.crashReport(throwable, text);
+		            }
+				}
+				else
+				{
+					JLog.alert("### Unknown source " + source + ", entity : " + attacker + ". Minecraft damage calculation will be applyed to prevent bug...");
+				}
 
 			}
 		}
 		
+		if(source instanceof EntityDamageSourceIndirect)
+		{
+			needCanceld = false;
+		}
+		
 		event.setCanceled(needCanceld);
 	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityHurt(LivingHurtEvent event)
+	{
+		if(!(event.getSource() instanceof IElementalDamageSource))
+		{
+			event.setCanceled(true);
+		}
+	}
+	
+	
 }

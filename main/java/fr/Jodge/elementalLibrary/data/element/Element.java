@@ -27,7 +27,8 @@ import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.network.BufUtils;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Variable;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class Element implements IElementalWritable
 {
@@ -153,7 +154,7 @@ public class Element implements IElementalWritable
 	public Element addOnDamageEffect(PotionEffect potion, float percent)
 	{
 		if(!onDamageEffect.containsKey(potion))
-			onDamageEffect.put(potion, percent);
+			onDamageEffect.put(potion, (percent>1.0f?1.0F:percent));
 		return this;
 	}
 	/**
@@ -177,7 +178,7 @@ public class Element implements IElementalWritable
 	public Element addOnHealEffect(PotionEffect potion, float percent)
 	{
 		if(!onHealEffect.containsKey(potion))
-			onHealEffect.put(potion, percent);
+			onHealEffect.put(potion, (percent>1.0f?1.0F:percent));
 		return this;
 	}
 	/**
@@ -252,6 +253,16 @@ public class Element implements IElementalWritable
 	public Element setDefaultValue(Class<? extends IElementalWritable> stat, String itemName, float value) 
 	{
 		defaultStringValue.get(stat).put(itemName, value);
+		return this;
+	}
+	public Element removeDefaultValue(Class<? extends IElementalWritable> stat, Class<? extends Entity> entity)
+	{
+		defaultClassValue.get(stat).remove(entity);
+		return this;
+	}
+	public Element removeDefaultValue(Class<? extends IElementalWritable> stat, String itemName)
+	{
+		defaultStringValue.get(stat).remove(itemName);
 		return this;
 	}
 	
@@ -370,7 +381,7 @@ public class Element implements IElementalWritable
 
 	@Override
 	// never Used here
-	public void autoUptdate(Object obj){}
+	public void autoUpdate(Object obj){}
 
 	
 	/**

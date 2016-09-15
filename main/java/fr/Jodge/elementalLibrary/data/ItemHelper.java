@@ -8,10 +8,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.network.AskItemStatsPacket;
 import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
@@ -48,7 +50,7 @@ public class ItemHelper extends DataHelper
 	}
 	public static String getUnlocalizedName(ItemStack i)
 	{
-		return getUnlocalizedName(i.getUnlocalizedName());
+		return getUnlocalizedName(i.getItem());
 	}
 	public static String getUnlocalizedName(String s)
 	{
@@ -60,9 +62,9 @@ public class ItemHelper extends DataHelper
 		String itemName = ItemHelper.getUnlocalizedName(stack);
 		if(stack.hasTagCompound())
 		{
-			if(stack.getTagCompound().hasKey("defaultMatrix"))
+			if(stack.getTagCompound().hasKey(Variable.DEFAULT_MATRIX_KEY))
 			{
-				itemName = stack.getTagCompound().getString("defaultMatrix");
+				itemName = stack.getTagCompound().getString(Variable.DEFAULT_MATRIX_KEY);
 			}
 		}
 		return itemName;

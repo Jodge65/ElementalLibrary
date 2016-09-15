@@ -17,7 +17,7 @@ import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import scala.Int;
 import scala.actors.threadpool.Arrays;
 import scala.util.parsing.json.JSON;
@@ -284,7 +284,6 @@ public abstract class ElementalMatrix implements IElementalWritable
 		else
 		{
 			JLog.warning("No attribut Damage available... Old value will be used... ");
-			//TODO find a better way...
 			return oldValue;
 		}
 		

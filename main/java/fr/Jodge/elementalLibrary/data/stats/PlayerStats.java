@@ -22,7 +22,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class PlayerStats extends AbstractStats
 {	

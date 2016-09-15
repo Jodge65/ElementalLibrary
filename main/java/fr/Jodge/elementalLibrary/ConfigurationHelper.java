@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.io.Files;
 
-import fr.Jodge.elementalLibrary.function.JLog;
+import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
