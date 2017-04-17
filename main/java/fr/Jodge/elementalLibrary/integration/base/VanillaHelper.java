@@ -1,62 +1,74 @@
-package fr.Jodge.elementalLibrary.server.data.register;
+package fr.Jodge.elementalLibrary.integration.base;
 
-import baubles.common.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.*;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionHelper;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ShieldMatrix;
 import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.integration.IElementalIntegration;
+import fr.Jodge.elementalLibrary.log.JLog;
 
-public class VanillaInitialization 
+public class VanillaHelper implements IElementalIntegration
 {
 	/**
 	 * Initialize all ElementalLibrary default element
 	 * and default resistance
 	 */
-	public static void initElement()
+	@Override
+	public void initElement()
 	{
-		/** just for less work */
-		Class atk = AttackMatrix.class;
-		Class def = DefenceMatrix.class;
-		Class dam = DamageMatrix.class;
-		Class shi = ShieldMatrix.class;
+		JLog.info("Initialization of Vanilla Value");
+		/** inherite variable */
+		//Class atk = AttackMatrix.class;
+		//Class def = DefenceMatrix.class;
+		//Class dam = DamageMatrix.class;
+		//Class shi = ShieldMatrix.class;
 		
 		/** default element */
 		// new PotionEffect(MobEffects.SPEED, 5, 1)
 		// <=> PotionEffect(Potion, Duration, Power)
+		// this part can be static as it must be charged each time server start
+		/** Default Normal Element */
 		Element normal = Element.addOrGet("normal");
-		Element fire = Element.addOrGet("fire").setFireEffect(0.75F, 2);
-		Element water = Element.addOrGet("water").addOnHealEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 2, 1), 1.0F);
-		Element wind = Element.addOrGet("wind").addOnHealEffect(new PotionEffect(MobEffects.SPEED, 5, 1), 1.0F);
+		/** Default Fire Element */
+		Element fire = Element.addOrGet("fire");
+		/** Default Water Element */
+		Element water = Element.addOrGet("water");
+		/** Default Wind Element */
+		Element wind = Element.addOrGet("wind");
+		/** Default Dirt Element */
 		Element dirt = Element.addOrGet("dirt");
+		/** Default Wood Element */
 		Element wood = Element.addOrGet("wood");
-		Element thunder = Element.addOrGet("thunder").setFireEffect(0.25F, 2);
+		/** Default Thunder Element */
+		Element thunder = Element.addOrGet("thunder");
+		/** Default Holy Element */
 		Element holy = Element.addOrGet("holy");
+		/** Default Dark Element */
 		Element dark = Element.addOrGet("dark");
-		Element poison = Element.addOrGet("poison").addOnDamageEffect(new PotionEffect(MobEffects.POISON, 2, 1), 0.75F);
-		Element hunger = Element.addOrGet("hunger").addOnDamageEffect(new PotionEffect(MobEffects.HUNGER, 5, 2), 0.9F).addOnHealEffect(new PotionEffect(MobEffects.SATURATION, 5, 2), 0.9F);
+		/** Default Poison Element */
+		Element poison = Element.addOrGet("poison");
+		/** Default Hunger Element */
+		Element hunger = Element.addOrGet("hunger");
+		
+		
+		fire.setFireEffect(0.75F, 1);
+		water.addOnHealEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 5, 1), 1.0F);
+		wind.addOnHealEffect(new PotionEffect(MobEffects.SPEED, 5, 1), 1.0F);
+		thunder.setFireEffect(0.10F, 2).addOnDamageEffect(new PotionEffect(MobEffects.GLOWING, 5, 1), 1.0F);
+		poison.addOnDamageEffect(new PotionEffect(MobEffects.POISON, 2, 1), 0.25F);
+		hunger.addOnDamageEffect(new PotionEffect(MobEffects.HUNGER, 5, 2), 0.9F).addOnHealEffect(new PotionEffect(MobEffects.SATURATION, 1, 2), 0.9F);
 		
 		// ATK
 		/*
@@ -107,8 +119,8 @@ public class VanillaInitialization
 		
 		// DEF
 		fire.setDefaultValue(def, EntityBlaze.class, -1.0F);
-		water.setDefaultValue(def, EntityBlaze.class, 2.5F);
-		wind.setDefaultValue(def, EntityBlaze.class, 2.0F);
+		water.setDefaultValue(def, EntityBlaze.class, 2.0F);
+		wind.setDefaultValue(def, EntityBlaze.class, 1.1F);
 		wood.setDefaultValue(def, EntityBlaze.class, 0.5F);
 		thunder.setDefaultValue(def, EntityBlaze.class, 0.5F);
 		dirt.setDefaultValue(def, EntityBlaze.class, 0.25F);
@@ -127,9 +139,10 @@ public class VanillaInitialization
 		dirt.setDefaultValue(def, EntityGhast.class, 0.0F);
 		holy.setDefaultValue(def, EntityGhast.class, 2.0F);
 		hunger.setDefaultValue(def, EntityGhast.class, 0.0F);
+		poison.setDefaultValue(def, EntityGhast.class, 0.0F);
 
-		wind.setDefaultValue(def, EntityGiantZombie.class, 1.25F);
-		dirt.setDefaultValue(def, EntityGiantZombie.class, 0.75F);
+		wind.setDefaultValue(def, EntityGiantZombie.class, 1.1F);
+		dirt.setDefaultValue(def, EntityGiantZombie.class, 0.9F);
 		
 		wind.setDefaultValue(def, EntityGolem.class, 0.25F);
 		dirt.setDefaultValue(def, EntityGolem.class, -0.25F);
@@ -139,7 +152,7 @@ public class VanillaInitialization
 		thunder.setDefaultValue(def, EntityGuardian.class, 2.0F);
 		
 		fire.setDefaultValue(def, EntityMagmaCube.class, 0.0F);
-		water.setDefaultValue(def, EntityMagmaCube.class, 2.0F);
+		water.setDefaultValue(def, EntityMagmaCube.class, 1.5F);
 		
 		fire.setDefaultValue(def, EntityPigZombie.class, 0.0F);
 		water.setDefaultValue(def, EntityPigZombie.class, 1.25F);
@@ -163,8 +176,8 @@ public class VanillaInitialization
 		water.setDefaultValue(def, EntitySnowman.class, -5.0F);
 		hunger.setDefaultValue(def, EntitySnowman.class, 0.0F);
 
-		dirt.setDefaultValue(def, EntitySpider.class, 0.5F);
-		poison.setDefaultValue(def, EntitySpider.class, 0.0F);
+		dirt.setDefaultValue(def, EntitySpider.class, 0.75F);
+		poison.setDefaultValue(def, EntitySpider.class, 0.25F);
 		
 		normal.setDefaultValue(def, EntityWitch.class, 0.75F);
 		fire.setDefaultValue(def, EntityWitch.class, 0.5F);
@@ -198,8 +211,8 @@ public class VanillaInitialization
 		
 		normal.setDefaultValue(def, EntityDragon.class, 0.75F);
 		fire.setDefaultValue(def, EntityDragon.class, 0.0F);
-		water.setDefaultValue(def, EntityDragon.class, 1.50F);
-		wind.setDefaultValue(def, EntityDragon.class, 1.25F);
+		water.setDefaultValue(def, EntityDragon.class, 1.1F);
+		wind.setDefaultValue(def, EntityDragon.class, 1.05F);
 		dirt.setDefaultValue(def, EntityDragon.class, 0.25F);
 		
 		normal.setDefaultValue(def, EntityWither.class, 0.75F);
@@ -309,32 +322,41 @@ public class VanillaInitialization
 		 	It only work for ItemArmor (or extend class)
 		 */
 		// leather
+		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_BOOTS),
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 1.1F);
+		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_CHESTPLATE),
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 1.1F);
+		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_HELMET),
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 1.1F);
+		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_LEGGINGS),
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 1.1F);
+		
 		water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_BOOTS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.9F);
 		water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_CHESTPLATE),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 0.9F);
 		water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_HELMET),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.9F);
 		water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_LEGGINGS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.9F);
 		
 		poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_BOOTS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.1F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.75F);
 		poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_CHESTPLATE),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 0.1F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 0.25F);
 		poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_HELMET),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.1F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.75F);
 		poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_LEGGINGS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.1F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.5F);
 
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_BOOTS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_BOOTS) * 0.75F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_CHESTPLATE),
 				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_CHESTPLATE) * 0.5F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_HELMET),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_HELMET) * 0.75F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.LEATHER_LEGGINGS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.5F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.LEATHER_LEGGINGS) * 0.75F);
 		
 		// golden
 		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.GOLDEN_BOOTS),
@@ -366,13 +388,13 @@ public class VanillaInitialization
 
 		// iron
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.IRON_BOOTS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_BOOTS) * 2.0F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_BOOTS) * 1.2F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.IRON_CHESTPLATE),
-				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_CHESTPLATE) * 2.0F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_CHESTPLATE) * 1.2F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.IRON_HELMET),
-				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_HELMET) * 2.0F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_HELMET) * 1.2F);
 		thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.IRON_LEGGINGS),
-				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_LEGGINGS) * 2.0F);
+				ShieldMatrix.getDamageReductionByMaterial(Items.IRON_LEGGINGS) * 1.2F);
 	
 		// chianmail
 		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.CHAINMAIL_BOOTS),
@@ -429,21 +451,14 @@ public class VanillaInitialization
 				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_HELMET) * 1.25F);
 		fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_LEGGINGS),
 				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_LEGGINGS) * 1.25F);
-
-		if(Main.isBaubleLoaded)
-		{
-			normal.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			fire.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			water.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			wind.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			wood.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			thunder.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			holy.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			dark.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			poison.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-			hunger.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Config.itemRing), 0.95F);
-		}
+		dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_BOOTS),
+				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_BOOTS) * 1.1F);
+		dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_CHESTPLATE),
+				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_CHESTPLATE) * 1.1F);
+		dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_HELMET),
+				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_HELMET) * 1.1F);
+		dirt.setDefaultValue(shi, ItemHelper.getUnlocalizedName(Items.DIAMOND_LEGGINGS),
+				ShieldMatrix.getDamageReductionByMaterial(Items.DIAMOND_LEGGINGS) * 1.1F);
 		
 		// DAMAGE SOURCES
 		Register.addNewElementOnDamageSources(DamageSource.anvil, dirt);
@@ -468,7 +483,7 @@ public class VanillaInitialization
 		Register.addNewElementOnDamageSources(DamageSource.wither, poison);
 		Register.setDamageSourceUseEffect(DamageSource.wither, false); // prevent player from get double damage (cause of poison)
 
-		Register.addNewElementOnDamageSources("arrow", normal);
+		//Register.addNewElementOnDamageSources("arrow", normal);
 		Register.addNewElementOnDamageSources("indirectMagic", normal);
 		Register.addNewElementOnDamageSources("thrown", normal);
 

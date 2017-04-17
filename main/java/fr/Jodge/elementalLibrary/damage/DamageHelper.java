@@ -4,9 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.EnumHand;
 import baubles.common.container.InventoryBaubles;
 import baubles.common.lib.PlayerHandler;
 import fr.Jodge.elementalLibrary.Main;
@@ -19,37 +28,8 @@ import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ShieldMatrix;
 import fr.Jodge.elementalLibrary.data.register.Getter;
-import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.log.JLog;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 
 public class DamageHelper 
 {
@@ -64,10 +44,10 @@ public class DamageHelper
 	public static FinalMatrix calculDamage(Entity attacker, EntityLivingBase targetEntity, float oldValue, boolean canApplyeDamageEffect, boolean canApplyeHealEffect)
 	{
 		DataParameter atkKey = Getter.getDataKeyForEntity(attacker, AttackMatrix.class);
-		AttackMatrix atkMatrix = attacker.getDataManager().get(atkKey);
+		AttackMatrix atkMatrix = (AttackMatrix)attacker.getDataManager().get(atkKey);
 		
 		DataParameter resistKey = Getter.getDataKeyForEntity(targetEntity, DefenceMatrix.class);
-		DefenceMatrix resistMatrix = targetEntity.getDataManager().get(resistKey);
+		DefenceMatrix resistMatrix = (DefenceMatrix)targetEntity.getDataManager().get(resistKey);
 
 		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
 		environnementMatrix.autoUpdate(attacker);
@@ -89,7 +69,7 @@ public class DamageHelper
 		}
 		if(canApplyeHealEffect)
 		{
-			returnValue.setNeedToApplyedDamageEffect(canApplyeHealEffect, damageMatrix);
+			returnValue.setNeedToApplyedHealEffect(canApplyeHealEffect, damageMatrix);
 		}
 
 		// TODO beautiful log
@@ -120,21 +100,21 @@ public class DamageHelper
 		return returnValue;
 	}
 	
-	public static FinalMatrix calculDistanceDamage(IProjectile projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue)
+	public static FinalMatrix calculIndirectDamage(Entity projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue)
 	{
-		return calculDistanceDamage(projectile, attacker, targetEntity, oldValue, true);
+		return calculIndirectDamage(projectile, attacker, targetEntity, oldValue, true);
 	}
-	public static FinalMatrix calculDistanceDamage(IProjectile projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue, boolean canApplyeDefaultEffect)
+	public static FinalMatrix calculIndirectDamage(Entity projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue, boolean canApplyeDefaultEffect)
 	{
-		return calculDistanceDamage(projectile, attacker, targetEntity, oldValue, canApplyeDefaultEffect, canApplyeDefaultEffect);
+		return calculIndirectDamage(projectile, attacker, targetEntity, oldValue, canApplyeDefaultEffect, canApplyeDefaultEffect);
 	}
-	public static FinalMatrix calculDistanceDamage(IProjectile projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue, boolean canApplyeDamageEffect, boolean canApplyeHealEffect)
+	public static FinalMatrix calculIndirectDamage(Entity projectile, Entity attacker, EntityLivingBase targetEntity, float oldValue, boolean canApplyeDamageEffect, boolean canApplyeHealEffect)
 	{
 		DataParameter atkKey = Getter.getDataKeyForEntity(attacker, AttackMatrix.class);
-		AttackMatrix atkMatrix = attacker.getDataManager().get(atkKey);
+		AttackMatrix atkMatrix = (AttackMatrix)attacker.getDataManager().get(atkKey);
 		
 		DataParameter resistKey = Getter.getDataKeyForEntity(targetEntity, DefenceMatrix.class);
-		DefenceMatrix resistMatrix = targetEntity.getDataManager().get(resistKey);
+		DefenceMatrix resistMatrix = (DefenceMatrix)targetEntity.getDataManager().get(resistKey);
 
 		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
 		environnementMatrix.autoUpdate(attacker);
@@ -157,7 +137,7 @@ public class DamageHelper
 		}
 		if(canApplyeHealEffect)
 		{
-			returnValue.setNeedToApplyedDamageEffect(canApplyeHealEffect, damageMatrix);
+			returnValue.setNeedToApplyedHealEffect(canApplyeHealEffect, damageMatrix);
 		}
 
 		// TODO beautiful log
@@ -185,17 +165,55 @@ public class DamageHelper
 			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
 			JLog.write("Matrix ARMOR : " + armorMatrix.toString());
 			JLog.write("Matrix FINAL : " + returnValue.toString());
-		}		
+		}
 		return returnValue;
 	}
 	
 	public static void ElementalizeDamageSource(EntityLivingBase target, DamageSource source, float amount) 
 	{
-		FinalMatrix newMatrix = Getter.getElementalizeDamageSource(source, amount).clone();
+		DamageMatrix baseMatrix = Getter.getElementalizeDamageSource(source, amount).clone();
+		baseMatrix.setTotalDamage(amount);
+		
+		DataParameter resistKey = Getter.getDataKeyForEntity(target, DefenceMatrix.class);
+		DefenceMatrix resistMatrix = (DefenceMatrix)target.getDataManager().get(resistKey);
+		
+		EnvironmentalMatrix environnementMatrix = new EnvironmentalMatrix();
+		environnementMatrix.autoUpdate(target);
+		
+		// initialize ShieldMatrix
+		ShieldMatrix armorMatrix = getShieldMatrix(target);
+
+		FinalMatrix newMatrix = doCalculation(baseMatrix,
+				resistMatrix,
+				environnementMatrix,
+				armorMatrix);
+		
 		newMatrix.setNeedToApplyedEffect(Getter.canApplyEffect(source));
 		newMatrix.updateCalculation();
 		appliedDamageEffect(target, newMatrix);
 		target.attackEntityFrom(new ElementalDamageSource(source, newMatrix), newMatrix.getTotalDamage());
+		
+		JLog.write("DAMAGE SOURCES");
+		if(!target.worldObj.isRemote)
+		{
+			JLog.write("SERVER ----------------------------- ");
+			JLog.write("Cible : " + target.getName());
+			JLog.write("Matrix Base  : " + baseMatrix.toString());
+			JLog.write("Matrix DEF   : " + resistMatrix.toString());
+			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
+			JLog.write("Matrix ARMOR : " + armorMatrix.toString());
+			JLog.write("Matrix FINAL : " + newMatrix.toString());
+		}
+		else
+		{
+			JLog.write("CLIENT ----------------------------- ");
+			JLog.write("Cible : " + target.getName());
+			JLog.write("Matrix Base  : " + baseMatrix.toString());
+			JLog.write("Matrix DEF   : " + resistMatrix.toString());
+			JLog.write("Matrix ENVIR : " + environnementMatrix.toString());
+			JLog.write("Matrix ARMOR : " + armorMatrix.toString());
+			JLog.write("Matrix FINAL : " + newMatrix.toString());
+		}
 	}
 	
 	
@@ -206,6 +224,12 @@ public class DamageHelper
 		return false;
 	}
 	
+	/**
+	 * Will took Damage matrix an apply each multiplier for creating final matrix
+	 * @param base <i>DamageMatrix</i> base matrix
+	 * @param listOfMatrix <i>ElementalMatrix...</i> all multiplier matrix
+	 * @return
+	 */
 	public static FinalMatrix doCalculation(DamageMatrix base, ElementalMatrix... listOfMatrix)
 	{
 		Map<Element, Float> damageByElement = new HashMap<Element, Float>();
@@ -238,6 +262,7 @@ public class DamageHelper
 			
 			if(itemStack != null)
 			{
+				JLog.info("Current Item Stack : " + itemStack.getDisplayName());
 				ItemStats baseItem = Getter.getItemStats(itemStack);
 				damageMatrix = ((DamageMatrix) baseItem.getStat(DamageMatrix.class)).clone();
 			}
@@ -245,7 +270,7 @@ public class DamageHelper
 			{
 				damageMatrix = new DamageMatrix().autoUpdateHand(((EntityLivingBase)attacker));
 			}
-			damageMatrix.autoUpdate(((EntityLivingBase)attacker), oldValue);
+			damageMatrix.autoUpdate(attacker, oldValue);
 		}
 		return damageMatrix;
 	}
@@ -294,6 +319,7 @@ public class DamageHelper
 		{
 			if(calculDamage.getNeedToApplyedDamageEffect())
 			{
+				JLog.info("Damage effect can be applyed.");
 				appliedDamageEffect(target, calculDamage);
 			}
 			target.attackEntityFrom(new EntityElementalDamageSource(oldSource, calculDamage), calculDamage.getTotalDamage());
@@ -303,6 +329,7 @@ public class DamageHelper
 		{
 			if(calculDamage.getNeedToApplyedHealEffect())
 			{
+				JLog.info("Heal effect can be applyed.");
 				appliedHealEffect(target, calculDamage);
 			}
 			target.heal(calculDamage.getTotalHeal());
@@ -339,10 +366,11 @@ public class DamageHelper
 			// if damage < 0 : heal
 			if(calculDamage.get(element) > 0 && calculDamage.domMatrix != null && element.asDamageEffect())
 			{
+				// For each possible effect.
 				for(Entry<PotionEffect, Float> effect : element.getDamageEffect())
 				{
 					int randomValue = target.getRNG().nextInt(100);
-					int probability = (int)(effect.getValue() * 100 * calculDamage.domMatrix.get(element));
+					int probability = (int)(effect.getValue() * 100 );//* calculDamage.domMatrix.get(element));
 					if(randomValue < probability)
 					{
 						PotionEffect potion = effect.getKey();

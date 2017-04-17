@@ -1,45 +1,29 @@
 package fr.Jodge.elementalLibrary.event;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.MonsterHelper;
 import fr.Jodge.elementalLibrary.data.PlayerHelper;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.ProjectilHelper;
 import fr.Jodge.elementalLibrary.data.network.InitDamageSourcePacket;
 import fr.Jodge.elementalLibrary.data.network.InitElementPacket;
-import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
-import fr.Jodge.elementalLibrary.data.register.Getter;
-import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.log.JLog;
 
 public class DataEvent
@@ -49,20 +33,35 @@ public class DataEvent
 	public void onSpawn(EntityJoinWorldEvent event)
 	{
 		Entity target = event.getEntity();
-		if(!(target instanceof EntityLivingBase))
+		/*if(!(target instanceof EntityLivingBase))
 		{
 			// ignore each entity that this not something alive
 			return;
 		}
-		else if(target instanceof EntityPlayer)
+		else */
+		
+		if(target instanceof EntityFallingBlock) return; // prevent from generation freeze... I hope...
+		if(target instanceof EntityXPOrb) return; // prevent from multi kill freeze
+		
+		if(target instanceof EntityPlayer)
 		{
 			// player data need to be saved somewhere to be used again
 			PlayerHelper.getPlayerHelper((EntityPlayer) target);
 		}
-		else
+		else if(target instanceof EntityLivingBase)
 		{
 			// monster data was store server side. Whit this, it's possible to personalize data for each map !
 			MonsterHelper.initMonster((EntityLivingBase)target);
+		}
+		else if(target instanceof EntityArrow)
+		{
+			// monster data was store server side. Whit this, it's possible to personalize data for each map !
+			ProjectilHelper.initArrowProjectil((EntityArrow)target);
+		}
+		else
+		{
+			// hummm
+			JLog.info("Unknown Entity type : " + target.getClass());
 		}
 	}	
 	

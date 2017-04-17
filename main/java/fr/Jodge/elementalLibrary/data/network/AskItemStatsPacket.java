@@ -3,8 +3,6 @@ package fr.Jodge.elementalLibrary.data.network;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +36,6 @@ public class AskItemStatsPacket implements IMessage
 				String matrixName = BufUtils.readUTF8String(buf);
 				stack.getTagCompound().setString(Variable.DEFAULT_MATRIX_KEY, matrixName);
 			}
-
 		}
 		else // can read stack from nbt
 		{
@@ -46,7 +43,9 @@ public class AskItemStatsPacket implements IMessage
 			
 			this.stack = ItemStack.loadItemStackFromNBT(itemTag);
 			if(stack == null)
+			{
 				JLog.error("Somethink wrong happen when try to load item for NBTTag...");
+			}
 		}
 
 	}
@@ -55,28 +54,32 @@ public class AskItemStatsPacket implements IMessage
 	public void toBytes(ByteBuf buf)
 	{
 		NBTTagCompound tags = stack.getTagCompound();
-		if(Item.getByNameOrId(tags.getString("id")) == null)
+		if(tags != null)
 		{
-			buf.writeBoolean(true);
-			BufUtils.writeUTF8String(buf, stack.getItem().getUnlocalizedName());
-			
-			if(tags.hasKey(Variable.DEFAULT_MATRIX_KEY))
+			if(Item.getByNameOrId(tags.getString("id")) == null)
 			{
 				buf.writeBoolean(true);
-				String matrixName = tags.getString(Variable.DEFAULT_MATRIX_KEY);
-				BufUtils.writeUTF8String(buf, matrixName);
+				BufUtils.writeUTF8String(buf, stack.getItem().getUnlocalizedName());
+				
+				if(tags.hasKey(Variable.DEFAULT_MATRIX_KEY))
+				{
+					buf.writeBoolean(true);
+					String matrixName = tags.getString(Variable.DEFAULT_MATRIX_KEY);
+					BufUtils.writeUTF8String(buf, matrixName);
+				}
+				else
+				{
+					buf.writeBoolean(false);
+				}
+				return;
 			}
-			else
-			{
-				buf.writeBoolean(false);
-			}
+			
 		}
-		else
-		{
-			buf.writeBoolean(false);
-			BufUtils.writeTag(buf, stack.writeToNBT(new NBTTagCompound()));
-
-		}
+		
+		// if tags == null || Item.getByNameOrId(tags.getString("id")) == null
+		buf.writeBoolean(false);
+		BufUtils.writeTag(buf, stack.writeToNBT(new NBTTagCompound()));		
+		
 	}
 
 	public static class Handler implements IMessageHandler<AskItemStatsPacket, ItemStatsPacket>

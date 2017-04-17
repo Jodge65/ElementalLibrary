@@ -1,26 +1,13 @@
 package fr.Jodge.elementalLibrary.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.minecraft.entity.player.EntityPlayer;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
 import fr.Jodge.elementalLibrary.data.stats.PlayerStats;
-import fr.Jodge.elementalLibrary.log.JLog;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PlayerHelper extends DataHelper
 {
@@ -29,7 +16,6 @@ public class PlayerHelper extends DataHelper
 
 	public PlayerStats stats;
 	public EntityPlayer player;
-	
 	
 	/**
 	 * Create new player.

@@ -1,22 +1,14 @@
 package fr.Jodge.elementalLibrary.data.register;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.DamageSource;
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.log.JLog;

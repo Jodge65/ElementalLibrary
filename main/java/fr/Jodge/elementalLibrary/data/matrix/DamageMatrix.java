@@ -1,62 +1,26 @@
 package fr.Jodge.elementalLibrary.data.matrix;
 
+import io.netty.buffer.ByteBuf;
+
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import com.google.gson.JsonObject;
 
-import scala.actors.threadpool.Arrays;
-import io.netty.buffer.ByteBuf;
+import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
 import fr.Jodge.elementalLibrary.log.JLog;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityEndermite;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGiantZombie;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.entity.monster.EntityMagmaCube;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntityShulker;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.monster.EntitySnowman;
-import net.minecraft.entity.monster.EntitySpider;
-import net.minecraft.entity.monster.EntityWitch;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.EntityMooshroom;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntityRabbit;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+
 
 public class DamageMatrix extends ElementalMatrix
 {
@@ -104,7 +68,7 @@ public class DamageMatrix extends ElementalMatrix
 	
 	public DamageMatrix autoUpdateHand(EntityLivingBase entity) 
 	{
-		ElementalMatrix atkMatrix = entity.getDataManager().get(Getter.getDataKeyForEntity(entity, AttackMatrix.class));
+		ElementalMatrix atkMatrix = (AttackMatrix)entity.getDataManager().get(Getter.getDataKeyForEntity(entity, AttackMatrix.class));
 
 		Element bestBonus = Element.findById(0);
 
@@ -118,13 +82,73 @@ public class DamageMatrix extends ElementalMatrix
 		return this;
 	}
 	
-	public DamageMatrix autoUpdate(EntityLivingBase entity, float oldValue) 
+	public DamageMatrix autoUpdate(Entity entity, float oldValue) 
 	{
-		totalDamage = getDamageFromEntity(entity, oldValue);
+		if(entity instanceof EntityLivingBase)
+		{
+			setTotalDamage(getDamageFromEntity((EntityLivingBase)entity, oldValue));
+		}
+		else if(entity instanceof EntityArrow)
+		{
+			autoUpdate((EntityArrow) entity, oldValue);
+		}
 		unDirty();
 		return this;
 	}
 	
+	public DamageMatrix autoUpdate(EntityArrow projectile, float oldValue) 
+	{
+		// base Item Creation
+		JLog.info("Try to do a dangerous protected method access.");
+		Method m;
+		ItemStack stack = null;
+		try
+		{
+			m = projectile.getClass().getDeclaredMethod(ElementalConfiguration.devEnv?"getArrowStack":"func_184550_j"); // getArrowStack
+			m.setAccessible(true);
+			stack = (ItemStack) m.invoke(projectile);
+			
+		}
+		catch (Throwable throwable)
+		{
+        	String text = "Something wrong happen while trying to acces protected method getArrowStack (func_184550_j)";
+        	ElementalCrashReport.crashReport(throwable, text);
+		}
+
+		// Add custom if needed
+		NBTTagCompound data = projectile.getEntityData();
+		if(data.hasKey(Variable.DEFAULT_MATRIX_KEY))
+		{
+			String matrixName = data.getString(Variable.DEFAULT_MATRIX_KEY);
+			stack.getTagCompound().setString(Variable.DEFAULT_MATRIX_KEY, matrixName);
+		}
+
+		ItemStats stats = Getter.getItemStats(stack);
+		
+		if(stats != null)
+		{
+			DamageMatrix projectileMatrix = (DamageMatrix) stats.getStat(this.getClass());
+			if(projectileMatrix != null)
+			{
+				for(Element element : Element.getAllElement())
+				{
+					float newValue = get(element) * projectileMatrix.get(element);
+					set(element, newValue);
+				}
+			}
+		}
+		setTotalDamage(oldValue);
+
+		unDirty();
+		return this;
+	}
+	
+	public DamageMatrix setTotalDamage(float value)
+	{
+		totalDamage = value;
+		return this;
+	}
+	/*
 	public DamageMatrix autoUpdate(IProjectile projectile, float oldValue) 
 	{
 		if(projectile instanceof Entity)
@@ -161,7 +185,7 @@ public class DamageMatrix extends ElementalMatrix
 		unDirty();
 		return this;
 	}
-	
+	*/
 	@Override
 	public String toString()
 	{
@@ -179,7 +203,7 @@ public class DamageMatrix extends ElementalMatrix
 	public void fromJsonObject(JsonObject j)
 	{
 		super.fromJsonObject(j);
-		totalDamage = j.get("totalDamage").getAsFloat();
+		setTotalDamage(j.get("totalDamage").getAsFloat());
 		unDirty();
 	}
 	
@@ -194,7 +218,7 @@ public class DamageMatrix extends ElementalMatrix
 	public void fromByte(ByteBuf buf) 
 	{
 		super.fromByte(buf);
-		totalDamage = buf.readFloat();
+		setTotalDamage(buf.readFloat());
 		unDirty();
 	}
 	

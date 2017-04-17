@@ -5,15 +5,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
@@ -21,7 +16,6 @@ import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 import fr.Jodge.elementalLibrary.log.JLog;
 
@@ -31,7 +25,8 @@ public class Getter extends Register
 	public static ItemStats getItemStatsIfExist(ItemStack stack)
 	{
 		String itemName = ItemHelper.getMatrixName(stack);
-		return DEFAULT_ITEM_STATS.getOrDefault(itemName, null);
+		
+		return DEFAULT_ITEM_STATS.containsKey(itemName)?DEFAULT_ITEM_STATS.get(itemName):null;
 	}
 
 	@Nullable
@@ -44,13 +39,14 @@ public class Getter extends Register
 			if(!DEFAULT_ITEM_STATS.containsKey(itemName))
 			{
 				ItemHelper.initItem(stack);
+				try	{Thread.sleep(50);} catch (InterruptedException e){}
 				JLog.warning("Value not exist. Waiting for Server to send value...");
 			}
 			
 			int waitingTime = 0;
 			while(!DEFAULT_ITEM_STATS.containsKey(itemName))
 			{
-				waitingTime++;
+				waitingTime += 5;
 				if(waitingTime % 1000 == 0)
 				{
 					JLog.info("Waiting... " + waitingTime / 1000 + "/10");
@@ -60,6 +56,7 @@ public class Getter extends Register
 					JLog.error("Value not receive for ItemName : " + itemName);
 					return null;
 				}
+				try	{Thread.sleep(50);} catch (InterruptedException e){}
 			}
 
 			return DEFAULT_ITEM_STATS.get(itemName);
@@ -77,7 +74,7 @@ public class Getter extends Register
 	{
 		if(VALUE_REGISTER.containsKey(clazz))
 		{
-			return VALUE_REGISTER.get(AttackMatrix.class).getOrDefault(value, null);
+			return VALUE_REGISTER.get(AttackMatrix.class).containsKey(value)?VALUE_REGISTER.get(AttackMatrix.class).get(value):null;
 		}
 		return null;
 	}
@@ -140,9 +137,9 @@ public class Getter extends Register
 	 * @param amount <i>float</i> amount of damage
 	 * @return <i>FinalMatrix</i>
 	 */
-	public static FinalMatrix getElementalizeDamageSource(DamageSource source, float amount) 
+	public static DamageMatrix getElementalizeDamageSource(DamageSource source, float amount) 
 	{
-		FinalMatrix returnValue = new FinalMatrix(0.0F);
+		DamageMatrix returnValue = new DamageMatrix();
 		if(DEFAULT_ELEMENT_DAMAGE_SOURCES.containsKey(source.getDamageType()))
 		{
 			returnValue.set(DEFAULT_ELEMENT_DAMAGE_SOURCES.get(source.getDamageType()), amount);
@@ -152,6 +149,7 @@ public class Getter extends Register
 			JLog.alert("DamageSources " + source.getDamageType() + " is not references... Element whit ID 0 is used...");
 			returnValue.set(Element.findById(0), amount);
 		}
+		returnValue.unDirty();
 		return returnValue;
 	}
 

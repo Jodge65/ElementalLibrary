@@ -3,11 +3,7 @@ package fr.Jodge.elementalLibrary.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.EntityDataManager.DataEntry;
@@ -30,7 +26,7 @@ public class DataHelper
 	 * @param dataType <i>int</i> constant defined in ElementalConstante
 	 * @return <i>DataParameter</i> Current Key
 	 */
-	public static DataParameter addEntityElement(EntityLivingBase target, IElementalWritable element)
+	public static DataParameter addEntityElement(Entity target, IElementalWritable element)
 	{
 		EntityDataManager targetData = target.getDataManager();
 		DataParameter key = Getter.getDataKeyForEntity(target, element.getClass());
@@ -58,10 +54,10 @@ public class DataHelper
 	
 	/**
 	 * 
-	 * @param target <i>EntityLivingBase</i> Entity to modify
+	 * @param target <i>Entity</i> Entity to modify
 	 * @param listOfMatrix <i>IElementalWritable...</i>one or more IElementalWritable to add.
 	 */
-	public static void initEntityMatrix(EntityLivingBase target, IElementalWritable... elements)
+	public static void initEntityMatrix(Entity target, IElementalWritable... elements)
 	{
 		for(IElementalWritable element : elements)
 		{
@@ -71,10 +67,10 @@ public class DataHelper
 	
 	/**
 	 * 
-	 * @param target <i>EntityLivingBase</i> Entity to modify
+	 * @param target <i>Entity</i> Entity to modify
 	 * @param stats <i>AbstractStats</i> Instance of AbstractStats (use to send/receive value to/from server)
 	 */
-	public static void initEntityMatrix(EntityLivingBase target, AbstractStats stats)
+	public static void initEntityMatrix(Entity target, AbstractStats stats)
 	{	
 		if(stats instanceof MonsterStats)
 		{
@@ -93,7 +89,7 @@ public class DataHelper
 		}
 	}
 	
-	public static List<ElementalMatrix> getElementalMatrix(EntityLivingBase target)
+	public static List<ElementalMatrix> getElementalMatrix(Entity target)
 	{
 		List<ElementalMatrix> matrix = new ArrayList<ElementalMatrix>();
 		

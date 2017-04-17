@@ -1,34 +1,15 @@
 package fr.Jodge.elementalLibrary.client.data.register;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
-import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
-import fr.Jodge.elementalLibrary.data.network.AskPlayerStatsPacket;
-import fr.Jodge.elementalLibrary.data.network.MonsterStatsPacket;
-import fr.Jodge.elementalLibrary.data.network.PlayerStatsPacket;
-import fr.Jodge.elementalLibrary.data.register.Register;
-import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.log.JLog;
 import fr.Jodge.elementalLibrary.server.data.register.CommonElementalConstante;
-import fr.Jodge.elementalLibrary.server.data.register.VanillaInitialization;
 
 /**
  * Client class for Constante

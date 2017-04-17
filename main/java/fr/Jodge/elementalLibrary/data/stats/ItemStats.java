@@ -1,11 +1,9 @@
 package fr.Jodge.elementalLibrary.data.stats;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.log.JLog;

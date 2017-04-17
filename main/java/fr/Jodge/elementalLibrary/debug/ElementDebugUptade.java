@@ -1,20 +1,20 @@
 package fr.Jodge.elementalLibrary.debug;
 
-import javax.swing.JTextArea;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.network.datasync.DataParameter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.network.datasync.DataParameter;
 import fr.Jodge.elementalLibrary.Main;
+import fr.Jodge.elementalLibrary.damage.DamageHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
+import fr.Jodge.elementalLibrary.data.matrix.ShieldMatrix;
 import fr.Jodge.elementalLibrary.data.register.Getter;
-import fr.Jodge.elementalLibrary.data.register.Variable;
 
 public class ElementDebugUptade extends Thread
 {
@@ -91,7 +91,7 @@ public class ElementDebugUptade extends Thread
 			for(Class clazz : Main.constante.MONSTER_STATS)
 			{
 				DataParameter key = Getter.getDataKeyForEntity(entity, clazz);
-				ElementalMatrix matrix = entity.getDataManager().get(key);
+				ElementalMatrix matrix = (ElementalMatrix)entity.getDataManager().get(key);
 				String sMatrix = matrix.toJsonObject().toString();
 				
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -102,6 +102,18 @@ public class ElementDebugUptade extends Thread
 				
 				text += "\"" + clazz + "\" :\n " + sMatrix + "\n";					
 			} 
+			
+			ShieldMatrix armorMatrix = DamageHelper.getShieldMatrix(entity);
+			String sMatrix = armorMatrix.toJsonObject().toString();
+			
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			JsonParser jsonParser = new JsonParser();
+			
+			JsonElement writableElement = jsonParser.parse(sMatrix);
+			sMatrix = gson.toJson(writableElement);
+			
+			text += "\"" + ShieldMatrix.class + "\" :\n " + sMatrix + "\n";
+			
 		}
 		return text;
 

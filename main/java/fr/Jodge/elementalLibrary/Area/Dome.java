@@ -3,8 +3,6 @@ package fr.Jodge.elementalLibrary.area;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.Jodge.elementalLibrary.log.JLog;
-
 /**
  * 
  * @author Jodge
@@ -128,7 +126,8 @@ public class Dome extends Schema
 		List<List<List<Boolean>>> areaBool = new ArrayList<List<List<Boolean>>>(); // Tab of boolean
 
 		int heigth = (grid - 1) / 2 + 1;
-		int domeSize = rayon * 2 + 1;
+		//int domeSize = rayon * 2 + 1;
+		
 		for (int y = 0; y <= heigth; y++)
 		{
 			areaBool.add(new ArrayList<List<Boolean>>());
@@ -142,7 +141,7 @@ public class Dome extends Schema
 		
 		List<List<Boolean>> domeStep = new ArrayList<List<Boolean>>();
 
-		int numberOfAdd = heigth - (rayon + 1);
+		//int numberOfAdd = heigth - (rayon + 1);
 		
 		for(int y = heigth; y > 0; y--)
 		{

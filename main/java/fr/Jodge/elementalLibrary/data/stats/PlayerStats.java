@@ -1,28 +1,11 @@
 package fr.Jodge.elementalLibrary.data.stats;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import jline.internal.Log;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.log.JLog;
 
 public class PlayerStats extends AbstractStats
 {	

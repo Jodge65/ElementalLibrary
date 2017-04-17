@@ -1,16 +1,16 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "elLibrary",
+  "name": "Elemental Library",
+  "description": "Change Vanilla Damage calculation whit custom Elemental calculation",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Jodge65"],
+  "credits": "The MCForgeFrench community for helping me so much",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": ["required-after:Baubles"]
 }
 ]

@@ -1,34 +1,20 @@
 package fr.Jodge.elementalLibrary.data.network;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
-import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
-import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import fr.Jodge.elementalLibrary.Main;
+import fr.Jodge.elementalLibrary.data.DataHelper;
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class MonsterStatsPacket implements IMessage
 {
@@ -87,7 +73,6 @@ public class MonsterStatsPacket implements IMessage
 	
 	public static class Handler implements IMessageHandler<MonsterStatsPacket, IMessage>
 	{
-
 		@Override
 		@SideOnly(Side.CLIENT)
 		public IMessage onMessage(MonsterStatsPacket message, MessageContext ctx) 
@@ -99,11 +84,7 @@ public class MonsterStatsPacket implements IMessage
 			// if entity exist / is loaded
 			if(entity != null)
 			{
-				if(entity instanceof EntityLivingBase)
-				{
-					DataHelper.initEntityMatrix((EntityLivingBase)entity, message.stats);
-				}
-
+				DataHelper.initEntityMatrix(entity, message.stats);
 			}
 			else
 			{

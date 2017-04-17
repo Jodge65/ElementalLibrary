@@ -7,6 +7,8 @@ public class ElementalConfiguration
 	public static boolean WINDOW_DEBUG ;
 	public static int JLOG_LEVEL;
 	
+	public static boolean devEnv;
+	
 	/** server only */
 	public static boolean USE_RAW_JSON;
 	public static String EXTENTION;

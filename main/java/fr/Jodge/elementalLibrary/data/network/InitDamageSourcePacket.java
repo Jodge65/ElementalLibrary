@@ -1,17 +1,18 @@
 package fr.Jodge.elementalLibrary.data.network;
 
+import fr.Jodge.elementalLibrary.data.element.Element;
+import fr.Jodge.elementalLibrary.data.register.Register;
+import fr.Jodge.elementalLibrary.data.register.Variable;
+import fr.Jodge.elementalLibrary.log.JLog;
+import io.netty.buffer.ByteBuf;
+
 import java.util.Map.Entry;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.register.Register;
-import fr.Jodge.elementalLibrary.data.register.Variable;
-import fr.Jodge.elementalLibrary.log.JLog;
 
 
 public class InitDamageSourcePacket implements IMessage
@@ -41,7 +42,7 @@ public class InitDamageSourcePacket implements IMessage
 		{
 			BufUtils.writeUTF8String(buf, entry.getKey());
 			buf.writeInt(entry.getValue().getId());
-			boolean needToApply = Variable.DEFAULT_EFFECT_DAMAGE_SOURCES.getOrDefault(entry.getKey(), true);
+			boolean needToApply = Variable.DEFAULT_EFFECT_DAMAGE_SOURCES.containsKey(entry.getKey())?Variable.DEFAULT_EFFECT_DAMAGE_SOURCES.get(entry.getKey()):true;
 			buf.writeBoolean(needToApply);
 		}
 

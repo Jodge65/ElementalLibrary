@@ -1,17 +1,6 @@
 package fr.Jodge.elementalLibrary.data.network;
 
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
-import fr.Jodge.elementalLibrary.data.ItemHelper;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
-import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
-import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -21,6 +10,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import fr.Jodge.elementalLibrary.Main;
+import fr.Jodge.elementalLibrary.data.ItemHelper;
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.stats.ItemStats;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 
 public class ItemStatsPacket implements IMessage

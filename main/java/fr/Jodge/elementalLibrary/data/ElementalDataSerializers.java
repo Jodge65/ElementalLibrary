@@ -1,18 +1,12 @@
 package fr.Jodge.elementalLibrary.data;
 
-import java.lang.reflect.InvocationTargetException;
-
-import scala.Int;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.network.BufUtils;
-import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
-import fr.Jodge.elementalLibrary.log.JLog;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.data.network.BufUtils;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
 
 public class ElementalDataSerializers extends DataSerializers
 {

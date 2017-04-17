@@ -3,25 +3,14 @@ package fr.Jodge.elementalLibrary.data.stats;
 import io.netty.buffer.ByteBuf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import jline.internal.Log;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
@@ -32,6 +21,7 @@ import com.google.gson.JsonParser;
 
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
+import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
 import fr.Jodge.elementalLibrary.log.JLog;
 
 public abstract class AbstractStats
@@ -224,11 +214,18 @@ public abstract class AbstractStats
 						if(succes)
 						{
 							JLog.info("Succefuly save data for " + obj.getClass() + " in file " + data.getName());
-
 						}
 					}
-				}
-			}
+					try
+					{
+						writeStream.close();
+					}
+					catch (IOException e)
+					{
+						JLog.warning("File isn't close. You may have memory issue if this problem happen often. File concern : " + data.getName());
+					}
+				} // end of if write stream if create
+			} // end of if file is created
 		}
 		else // else data == null
 		{
@@ -262,12 +259,10 @@ public abstract class AbstractStats
 		{
 			JsonParser parser = new JsonParser();
 					
-			JsonObject finalobject = (JsonObject) parser.parse(readStream);
-
+			JsonObject finalObject = (JsonObject) parser.parse(readStream);
 			// if we finaly get the json file !
 			if(succes)
 			{
-				
 				// for each object... I guess
 				for(Class<? extends IElementalWritable> clazz : listOfAvailableStats)
 				{
@@ -276,7 +271,7 @@ public abstract class AbstractStats
 					// we use class name to send
 					String key = clazz.getName();
 					// get current object if exist...
-					JsonObject currentObject = finalobject.getAsJsonObject(key);
+					JsonObject currentObject = finalObject.getAsJsonObject(key);
 					
 					if(currentObject != null)
 					{
@@ -296,9 +291,8 @@ public abstract class AbstractStats
 					{
 						JLog.error("Data File need to be update. Key " + key + " doensn't exist...");
 					}
-
-				}
-			}
+				} // for each class
+			} // if succes
 		}
 		
 		
@@ -323,7 +317,16 @@ public abstract class AbstractStats
 	 */
 	public IElementalWritable getStat(Class key)
 	{
-		return value.get(key);
+		try
+		{
+			return value.get(key);
+		}
+		catch (Throwable throwable) 
+		{
+			String text = "The class named " + key + " doesn't exist in current class.";
+			ElementalCrashReport.crashReport(throwable, text);
+		}
+		return null;
 	}
 	
 	@Deprecated

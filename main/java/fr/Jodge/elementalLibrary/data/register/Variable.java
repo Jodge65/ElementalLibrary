@@ -3,16 +3,11 @@ package fr.Jodge.elementalLibrary.data.register;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
 

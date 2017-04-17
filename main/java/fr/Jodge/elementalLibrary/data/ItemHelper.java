@@ -1,22 +1,16 @@
 package fr.Jodge.elementalLibrary.data;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
 import fr.Jodge.elementalLibrary.data.network.AskItemStatsPacket;
-import fr.Jodge.elementalLibrary.data.network.AskMonsterStatsPacket;
 import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.data.register.Variable;
-import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
-import fr.Jodge.elementalLibrary.data.stats.MonsterStats;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class ItemHelper extends DataHelper
 {
@@ -24,6 +18,7 @@ public class ItemHelper extends DataHelper
 	{	
 		if(FMLCommonHandler.instance().getEffectiveSide().isClient())
 		{
+			JLog.info("New Item asked : " + stack.getDisplayName());
 			Main.constante.STATS_SOCKET.sendToServer(new AskItemStatsPacket(stack));
 		}
 		else

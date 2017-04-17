@@ -1,16 +1,8 @@
 package fr.Jodge.elementalLibrary.data.network;
 
-import java.util.UUID;
-
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

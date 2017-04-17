@@ -2,21 +2,18 @@ package fr.Jodge.elementalLibrary.server.data.register;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
-import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.ElementalDataSerializers;
-import fr.Jodge.elementalLibrary.data.ItemHelper;
+import net.minecraft.item.Item;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.matrix.AttackMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DamageMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.DefenceMatrix;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.EnvironmentalMatrix;
 import fr.Jodge.elementalLibrary.data.matrix.ShieldMatrix;
 import fr.Jodge.elementalLibrary.data.network.AskItemStatsPacket;
@@ -31,16 +28,8 @@ import fr.Jodge.elementalLibrary.data.register.Register;
 import fr.Jodge.elementalLibrary.data.register.Variable;
 import fr.Jodge.elementalLibrary.data.stats.AbstractStats;
 import fr.Jodge.elementalLibrary.data.stats.ItemStats;
+import fr.Jodge.elementalLibrary.integration.ElementalIntegrationHelper;
 import fr.Jodge.elementalLibrary.log.JLog;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Common class for Constante
@@ -145,7 +134,7 @@ public class CommonElementalConstante extends Variable
 	{
 		// WARNING : integrated server work whit proxy on ClienSide.
 		JLog.info(" --- SERVER START --- ");
-		VanillaInitialization.initElement();
+		ElementalIntegrationHelper.initializeClass();
 	}
 
 	// nothing common

@@ -3,14 +3,14 @@ package fr.Jodge.elementalLibrary.area;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import com.google.common.collect.Lists;
 
 
 public class AreaHelper
@@ -126,14 +126,14 @@ public class AreaHelper
     
 	public static List getEntitySquareArea(EntityPlayer player, double range)
 	{
-        ArrayList listToFill = Lists.newArrayList();
+        ArrayList<Entity> listToFill = Lists.newArrayList();
 		BlockPos playerPos = player.getPosition();
 		
 		double hyp = Math.sqrt(2 * Math.pow(range, 2));
 		Vec3d entityView = subVector(player.getLook(1.0F).normalize(), hyp);
 		
 		double xVector = entityView.xCoord * hyp;
-		double yVector = entityView.yCoord * hyp;
+		//double yVector = entityView.yCoord * hyp;
 		double zVector = entityView.zCoord * hyp;
 		
 		double xDebut = playerPos.getX() - entityView.xCoord;
@@ -147,10 +147,6 @@ public class AreaHelper
 		AxisAlignedBB area = new AxisAlignedBB(xDebut, yDebut, zDebut, xFinal, yFinal, zFinal);
 
 		List entityList = getEntityInArea(player, area);
-		
-		//JLog.write(" #1# xDebut = " + xDebut + ", yDebut = " + yDebut + ", zDebut = " + zDebut);
-		//JLog.write(" #2# xFinal = " + xFinal + ", yFinal = " + yFinal + ", zFinal = " + zFinal);
-		//JLog.write(" #3# xVector = " + xVector + ", yVector = " + yVector + ", zVector = " + zVector);
 	
 		for (int i = 0; i < entityList.size(); i++)
 		{

@@ -1,9 +1,8 @@
 package fr.Jodge.elementalLibrary.data.interfaces;
 
-import com.google.gson.JsonObject;
-
-import net.minecraft.entity.Entity;
 import io.netty.buffer.ByteBuf;
+
+import com.google.gson.JsonObject;
 
 public interface IElementalWritable 
 {

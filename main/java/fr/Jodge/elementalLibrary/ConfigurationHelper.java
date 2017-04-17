@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+
 import com.google.common.io.Files;
 
 import fr.Jodge.elementalLibrary.log.JLog;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class ConfigurationHelper 
 {
@@ -36,10 +37,7 @@ public class ConfigurationHelper
 			JLog.warning("Instance of Configuration is not existing. Please try again.");
 			return null;
 		}
-		else
-		{
-			return _INSTANCE;
-		}
+		return _INSTANCE;
 	}
 	
 	/**

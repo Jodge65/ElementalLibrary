@@ -1,14 +1,9 @@
 package fr.Jodge.elementalLibrary.data.network;
 
-import java.util.UUID;
-
 import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
-import fr.Jodge.elementalLibrary.log.JLog;
 import io.netty.buffer.ByteBuf;
 
-import org.apache.commons.lang3.Validate;
-
-import com.google.common.base.Charsets;
+import java.util.UUID;
 
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 

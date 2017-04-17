@@ -1,17 +1,15 @@
 package fr.Jodge.elementalLibrary.data.matrix;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.netty.buffer.ByteBuf;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.gson.JsonObject;
 
-import scala.actors.threadpool.Arrays;
-import io.netty.buffer.ByteBuf;
 import fr.Jodge.elementalLibrary.data.element.Element;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
-import net.minecraft.entity.Entity;
+import fr.Jodge.elementalLibrary.log.JLog;
+
 
 public class FinalMatrix extends ElementalMatrix
 {
@@ -72,6 +70,7 @@ public class FinalMatrix extends ElementalMatrix
 	
 	public FinalMatrix useThisAsDamageMatrix()
 	{
+		JLog.alert("An empty Damage Matrix is initialize...");
 		domMatrix = new DamageMatrix();
 		return this;
 	}

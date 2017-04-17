@@ -2,32 +2,21 @@ package fr.Jodge.elementalLibrary.data.element;
 
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
 
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.data.network.BufUtils;
-import fr.Jodge.elementalLibrary.data.register.Getter;
 import fr.Jodge.elementalLibrary.data.register.Variable;
-import fr.Jodge.elementalLibrary.log.ElementalCrashReport;
 import fr.Jodge.elementalLibrary.log.JLog;
 
 public class Element implements IElementalWritable
@@ -215,7 +204,7 @@ public class Element implements IElementalWritable
 	 * 
 	 * @param probability <i>float</i> probability to applied fire effect (1.0F = 100%, 0.5F = 50%)
 	 * @param duration <i>int</i> burning time in second
-	 * @return
+	 * @return this
 	 */
 	public Element setFireEffect(float probability, int duration)
 	{
@@ -226,6 +215,12 @@ public class Element implements IElementalWritable
 		return this;
 	}
 	
+	/**
+	 * Inactive Fire effect (note : if multiple mod switch fire, only the last will be used. 
+	 * It's mean that if you inactive fire, and someone else active fire, fire will be active.
+	 * It's also mean that if you active fire, but someone inactive fire after, fire will be inactive.
+	 * @return this
+	 */
 	public Element disabledFireEffect()
 	{
 		this.canAppliedFire = false;
@@ -235,7 +230,7 @@ public class Element implements IElementalWritable
 	@Override
 	public String toString()
 	{
-		return "@" + this.hashCode() + "-" + this.id + ":" + this.name + "(" + this.isActive + ")";
+		return /*"@" + this.hashCode() + "-" +*/ this.id + ":" + this.name + "(" + this.isActive + ")";
 	}
 	/**
 	 * 

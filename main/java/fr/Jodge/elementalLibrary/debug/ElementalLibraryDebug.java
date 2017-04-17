@@ -1,24 +1,15 @@
 package fr.Jodge.elementalLibrary.debug;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,24 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-
-import fr.Jodge.elementalLibrary.log.JLog;
-
-import javax.swing.JToolBar;
-
-import java.awt.BorderLayout;
-
-import javax.swing.BoxLayout;
-
-import java.awt.Component;
-
 import javax.swing.ScrollPaneConstants;
-import javax.swing.text.BadLocationException;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-
-import java.awt.Panel;
+import fr.Jodge.elementalLibrary.log.JLog;
 
 public class ElementalLibraryDebug extends JFrame
 {
@@ -67,6 +44,9 @@ public class ElementalLibraryDebug extends JFrame
 	{
 		super("ElementalLibrary Debug");
 		addWindowListener(new ActionClose());
+		
+		//setUndecorated(true);
+		
 		actualSize = 0;
 		maxSize = 65536;
 		
@@ -198,8 +178,8 @@ public class ElementalLibraryDebug extends JFrame
 	
 	private class ActionClose extends WindowAdapter
 	{
-		//@Override
-		public synchronized void windowClosing()
+		@Override
+		public synchronized void windowClosing(WindowEvent arg)
 		{
 			saveLog("historique.log");
 		}

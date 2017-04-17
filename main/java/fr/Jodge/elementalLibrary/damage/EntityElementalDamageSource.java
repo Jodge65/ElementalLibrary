@@ -1,7 +1,5 @@
 package fr.Jodge.elementalLibrary.damage;
 
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalDamageSource;
-import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -9,6 +7,8 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
+import fr.Jodge.elementalLibrary.data.interfaces.IElementalDamageSource;
+import fr.Jodge.elementalLibrary.data.matrix.FinalMatrix;
 
 public class EntityElementalDamageSource extends EntityDamageSource implements IElementalDamageSource
 {

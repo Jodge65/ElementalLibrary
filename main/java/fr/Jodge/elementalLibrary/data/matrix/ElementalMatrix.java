@@ -2,43 +2,21 @@ package fr.Jodge.elementalLibrary.data.matrix;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
-import com.google.common.base.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.item.ItemStack;
+
 import com.google.gson.JsonObject;
 
-import fr.Jodge.elementalLibrary.data.DataHelper;
 import fr.Jodge.elementalLibrary.data.ItemHelper;
 import fr.Jodge.elementalLibrary.data.element.Element;
 import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.log.JLog;
-import scala.Int;
-import scala.actors.threadpool.Arrays;
-import scala.util.parsing.json.JSON;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureAttribute;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.boss.*;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.*;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * What is that ?
@@ -271,23 +249,27 @@ public abstract class ElementalMatrix implements IElementalWritable
 	/**
 	 * 
 	 * @param entity <i>Entity</i>
+	 * @param oldValue <i>float</i>
 	 * @return
 	 */
 	public float getDamageFromEntity(EntityLivingBase entity, float oldValue)
 	{
+		return oldValue;
+		// TODO Improve calculation base for better mod scaled result
+		/*
 		float baseDamage = 0.0F;
 		
 		if(entity.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE) != null)
 		{
-			baseDamage = (float)entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+			baseDamage = (float)entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() + oldValue - 1.0F;
 		}
 		else
 		{
-			JLog.warning("No attribut Damage available... Old value will be used... ");
+			JLog.warning("No attribut Damage available, Old value will be used ");
 			return oldValue;
 		}
 		
-		return baseDamage;
+		return baseDamage;*/
 	}
 	
 	/**
@@ -327,14 +309,17 @@ public abstract class ElementalMatrix implements IElementalWritable
 	{
 		updateItem(ItemHelper.getMatrixName(stack), clazz);
 	}
+	
 	protected void updateItem(ItemStack stack, Class<? extends ElementalMatrix> clazz, boolean mustHaveOne) 
 	{
 		updateItem(ItemHelper.getMatrixName(stack), clazz, mustHaveOne);
 	}
+	
 	protected void updateItem(String itemName, Class<? extends ElementalMatrix> clazz) 
 	{
 		updateItem(itemName, clazz, true); 
 	}
+	
 	protected void updateItem(String itemName, Class<? extends ElementalMatrix> clazz, boolean mustHaveOne) 
 	{
 		boolean atLeastOne = false;

@@ -1,34 +1,9 @@
 package fr.Jodge.elementalLibrary.data.stats;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import jline.internal.Log;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.storage.ISaveFormat;
-import net.minecraft.world.storage.SaveFormatOld;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.gson.JsonObject;
-
-import scala.reflect.io.Directory;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.interfaces.IElementalWritable;
 import fr.Jodge.elementalLibrary.log.JLog;
 
 public class MonsterStats extends AbstractStats

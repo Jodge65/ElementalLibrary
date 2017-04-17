@@ -1,14 +1,7 @@
 package fr.Jodge.elementalLibrary.log;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ReportedException;
 import fr.Jodge.elementalLibrary.ElementalConfiguration;
 import fr.Jodge.elementalLibrary.Main;
-import fr.Jodge.elementalLibrary.data.DataHelper;
-import fr.Jodge.elementalLibrary.data.matrix.ElementalMatrix;
-import fr.Jodge.elementalLibrary.data.register.Getter;
 
 public class JLog
 {
